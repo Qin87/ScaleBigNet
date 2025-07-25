@@ -53,8 +53,6 @@ def run(args):
             model=model,
             lr=args.lr,
             weight_decay=args.weight_decay,
-            imag_weight_decay=args.imag_weight_decay, 
-            real_weight_decay=args.real_weight_decay,
             evaluator=evaluator,
             train_mask=train_mask,
             val_mask=val_mask,

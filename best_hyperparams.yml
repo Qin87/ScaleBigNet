@@ -5,7 +5,7 @@ squirrel:
   num_layers: 4
   jk: "max"
   patience: 400
-  conv_type: "complex-holonet"
+#  conv_type: "complex-holonet"
   alpha: 1
   normalize: True
   k_plus: 5

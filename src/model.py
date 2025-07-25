@@ -330,12 +330,10 @@ class GNN(torch.nn.Module):
 
 
 class LightingFullBatchModelWrapper(pl.LightningModule):
-    def __init__(self, model, lr, weight_decay, real_weight_decay, imag_weight_decay, train_mask, val_mask, test_mask, evaluator=None):
+    def __init__(self, model, lr, weight_decay, train_mask, val_mask, test_mask, evaluator=None):
         super().__init__()
         self.model = model
         self.lr = lr
-        self.imag_weight_decay = imag_weight_decay
-        self.real_weight_decay = real_weight_decay
         self.weight_decay = weight_decay
         self.evaluator = evaluator
         self.train_mask, self.val_mask, self.test_mask = train_mask, val_mask, test_mask
@@ -387,7 +385,7 @@ class LightingFullBatchModelWrapper(pl.LightningModule):
             else:
                 other_params.append(param)
 
-        optimizer = optim.AdamW([{'params': other_params, 'weight_decay': self.weight_decay}, {'params': real_weights, 'weight_decay': self.real_weight_decay}, {'params': imag_weights, 'weight_decay': self.imag_weight_decay}], lr = self.lr)
+        optimizer = optim.AdamW([{'params': other_params, 'weight_decay': self.weight_decay}], lr = self.lr)
         
         return optimizer
 
