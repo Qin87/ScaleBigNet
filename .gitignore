@@ -1,0 +1,10 @@
+/checkpoint/
+/lightning_logs/
+*.log
+*.pt
+*.gz
+*.txt
+*.xml
+*.mat
+*.npy
+*.npz

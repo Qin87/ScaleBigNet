@@ -21,7 +21,7 @@ parser.add_argument("--num_layers", type=int, help="Number of GNN layers", defau
 parser.add_argument("--dropout", type=float, help="Feature dropout", default=0.0)
 parser.add_argument("--alpha", type=float, help="Direction convex combination params", default=0.5)
 parser.add_argument("--learn_alpha", action="store_true")
-parser.add_argument("--conv_type", type=str, help="Selects Convolutional Layer", default="fabernet")
+parser.add_argument("--conv_type", type=str, help="Selects Convolutional Layer", default="scalenet")
 parser.add_argument("--normalize", action="store_true")
 parser.add_argument("--jk", type=str, choices=["max", "cat", None], default="max")
 parser.add_argument("--weight_penalty", type=str, choices=["exp", "lin", None], default="exp")
