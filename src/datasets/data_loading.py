@@ -34,7 +34,8 @@ from src.datasets.synthetic import get_syn_dataset
 def get_dataset(name: str, root_dir: str, homophily=None, undirected=False, self_loops=False, transpose=False):
     path = f"{root_dir}/"
     evaluator = None
-
+    if hasattr(torch.serialization, "add_safe_globals"):
+        torch.serialization.add_safe_globals([Data])   # ScaleBig
     if name in ["chameleon", "squirrel"]:
         dataset = WikipediaNetwork(root=path, name=name, transform=transforms.NormalizeFeatures())
         dataset._data.y = dataset._data.y.unsqueeze(-1)
