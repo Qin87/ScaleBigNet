@@ -23,7 +23,7 @@ logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)   #
 import time
 
 def run(args):
-    torch.manual_seed(0)
+    torch.manual_seed(args.seed)
 
     # Get dataset and dataloader
     dataset, evaluator = get_dataset(

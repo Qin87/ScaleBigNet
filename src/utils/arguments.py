@@ -2,6 +2,7 @@ import argparse
 import logging
 
 parser = argparse.ArgumentParser("Directed Graph Neural Network")
+parser.add_argument("--seed", type=int, help="manual seed", default=10)
 
 ### Dataset Args
 parser.add_argument("--dataset", type=str, help="Name of dataset", default="chameleon")
@@ -32,8 +33,6 @@ parser.add_argument("--zero_order", type=bool, help="If zero order", default= Fa
 ### Training Args
 parser.add_argument("--lr", type=float, help="Learning Rate", default=0.001)
 parser.add_argument("--weight_decay", type=float, help="Weight decay", default=0.0)
-parser.add_argument("--imag_weight_decay", type=float, help="Weight decay of imaginary weights", default=0.0)
-parser.add_argument("--real_weight_decay", type=float, help="Weight decay of real weights", default=0.0)
 parser.add_argument("--num_epochs", type=int, help="Max number of epochs", default=10000)
 parser.add_argument("--patience", type=int, help="Patience for early stopping", default=10)
 parser.add_argument("--num_runs", type=int, help="Max number of runs", default=10)

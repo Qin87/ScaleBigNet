@@ -8,8 +8,6 @@ squirrel:
   conv_type: "complex-holonet"
   alpha: 1
   normalize: True
-  imag_weight_decay: 0.1
-  real_weight_decay: 0.1
   k_plus: 5
   exponent: -0.25
   weight_penalty: exp
@@ -24,8 +22,6 @@ chameleon:
 #  conv_type: "complex-fabernet"
   alpha: 1  # complex use 0. faber use 1
   normalize: True
-  imag_weight_decay: 1
-  real_weight_decay: 1
   k_plus: 4
   exponent: -0.25
   weight_penalty: exp
