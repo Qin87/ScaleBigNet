@@ -47,8 +47,6 @@ def run(args):
         args.num_features, args.num_classes = data.num_features, dataset.num_classes
         model = get_model(args)
 
-
-
         lit_model = LightingFullBatchModelWrapper(
             model=model,
             lr=args.lr,
