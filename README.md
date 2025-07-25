@@ -132,15 +132,7 @@ The following command line arguments can be used with the code:
 | --patience          | int   | 10            | Patience for early stopping                        |
 | --num_runs          | int   | 1             | Max number of runs                                 |
 
-### System Args
 
-| Argument               | Type | Default Value | Description                                      |
-| ---------------------- | ---- | ------------- | ------------------------------------------------ |
-| --use_best_hyperparams | flag |               | If specified, use the best hyperparameters       |
-| --gpu_idx              | int  | 0             | Indexes of GPU to run the program on             |
-| --num_workers          | int  | 0             | Number of workers for the dataloader             |
-| --log                  | str  | "INFO"        | Log Level. Choices: ["DEBUG", "INFO", "WARNING"] |
-| --profiler             | flag |               | If specified, enable profiler                    |
 
 
 
