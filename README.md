@@ -1,10 +1,6 @@
 # ScaleBigNet: Multi-scale GNN for large graphs
 
-
-
-
-- [HoloNets: Spectral Convolutions do extend to Directed Graphs](#holonets-spectral-convolutions-do-extend-to-directed-graphs)
-  - [Overview](#overview)
+ - [Overview](#overview)
   - [Getting Started](#getting-started)
     - [Setting Up the Environment](#setting-up-the-environment)
     - [Installing Dependencies](#installing-dependencies)
@@ -16,9 +12,6 @@
     - [Preprocessing Arguments](#preprocessing-arguments)
     - [Model Arguments](#model-arguments)
     - [Training Args](#training-args)
-    - [System Args](#system-args)
-  - [Citation](#citation)
-  - [Contact](#contact)
 
 ## Overview
 
