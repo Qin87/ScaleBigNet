@@ -36,10 +36,10 @@ parser.add_argument("--imag_weight_decay", type=float, help="Weight decay of ima
 parser.add_argument("--real_weight_decay", type=float, help="Weight decay of real weights", default=0.0)
 parser.add_argument("--num_epochs", type=int, help="Max number of epochs", default=10000)
 parser.add_argument("--patience", type=int, help="Patience for early stopping", default=10)
-parser.add_argument("--num_runs", type=int, help="Max number of runs", default=1)
+parser.add_argument("--num_runs", type=int, help="Max number of runs", default=10)
 
 ### System Args
-parser.add_argument("--use_best_hyperparams", action="store_true")
+parser.add_argument("--use_best_hyperparams", action="store_false")
 parser.add_argument("--gpu_idx", type=int, help="Indexes of gpu to run program on", default=0)
 parser.add_argument("--num_workers", type=int, help="Num of workers for the dataloader", default=0)
 parser.add_argument("--log", type=str, help="Log Level", default="INFO", choices=["DEBUG", "INFO", "WARNING"])

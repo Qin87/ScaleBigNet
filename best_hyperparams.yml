@@ -6,7 +6,7 @@ squirrel:
   jk: "max"
   patience: 400
   conv_type: "complex-holonet"
-  alpha: 0
+  alpha: 1
   normalize: True
   imag_weight_decay: 0.1
   real_weight_decay: 0.1
@@ -21,8 +21,8 @@ chameleon:
   num_layers: 5
   jk: "cat"
   patience: 400
-  conv_type: "complex-fabernet"
-  alpha: 0
+#  conv_type: "complex-fabernet"
+  alpha: 1  # complex use 0. faber use 1
   normalize: True
   imag_weight_decay: 1
   real_weight_decay: 1

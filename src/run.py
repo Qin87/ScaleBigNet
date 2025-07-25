@@ -1,4 +1,7 @@
+
 import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0' # supress: oneDNN custom operations are on
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 3 supress warning:Unable to register cuFFT factory...
 import numpy as np
 import uuid
 
@@ -13,7 +16,11 @@ from src.datasets.data_loading import get_dataset, get_dataset_split
 from src.datasets.dataset import FullBatchGraphDataset
 from src.model import get_model, LightingFullBatchModelWrapper
 from src.utils.arguments import args
-
+import warnings   # ScaleNet2
+warnings.filterwarnings("ignore")
+import logging
+logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)   #
+import time
 
 def run(args):
     torch.manual_seed(0)
@@ -29,8 +36,10 @@ def run(args):
     data = dataset._data
     data_loader = DataLoader(FullBatchGraphDataset(data), batch_size=1, collate_fn=lambda batch: batch[0])
 
+    start_time = time.time()
     val_accs, test_accs = [], []
     for num_run in range(args.num_runs):
+        print("\nstart run: ", num_run)
         # Get train/val/test splits for the current run
         train_mask, val_mask, test_mask = get_dataset_split(args.dataset, data, args.dataset_directory, num_run)
 
@@ -67,6 +76,7 @@ def run(args):
         trainer = pl.Trainer(
             log_every_n_steps=1,
             enable_progress_bar = False,
+            enable_model_summary=False,  # suppresses the model table  # ScaleNet2
             max_epochs=args.num_epochs,
             callbacks=[
                 early_stopping_callback,
@@ -87,9 +97,12 @@ def run(args):
         test_accs.append(test_acc)
         val_accs.append(val_acc)
 
+        print('Used time: ', time.time() - start_time)
+
     print(f"Test Acc: {np.mean(test_accs)} +- {np.std(test_accs)}")
 
 
 if __name__ == "__main__":
     args = use_best_hyperparams(args, args.dataset) if args.use_best_hyperparams else args
+    print(args)
     run(args)
