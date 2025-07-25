@@ -22,7 +22,9 @@
 
 ## Overview
 
-Within the graph learning community, conventional wisdom dictates that spectral convolutional networks may only be deployed on undirected graphs: Only there could the existence of a well-defined graph Fourier transform be guaranteed, so that information may be translated between spatial- and spectral domains. Here we show this traditional reliance on the graph Fourier transform to be superfluous and -- making use of certain advanced tools from complex analysis and spectral theory -- extend spectral convolutions to directed graphs. We provide a frequency-response interpretation of newly developed filters, investigate the influence of the basis used to express filters and discuss the interplay with characteristic operators on which networks are based. In order to thoroughly test the developed theory, we conduct experiments in real world settings, showcasing that directed spectral convolutional networks provide new state of the art results for heterophilic node classification on many datasets and -- as opposed to baselines -- may be rendered stable to resolution-scale varying topological perturbations. 
+ScaleNet leverage multi-scale features to learn from graph to get better performance than single-scale models. 
+However, higher-scaled feature learning in ScaleNet involves matrix multiplication of adjacency matrix, whose dimensions are node number of graph.
+ScaleBigNet avoids AA, by A(AX) instead of (AA)X to get aggregated feature.
 
 ## Getting Started
 
@@ -137,22 +139,6 @@ The following command line arguments can be used with the code:
 
 
 ## Credit
-This repository builds on top of Emanuele Rossi's [dir-gnn repository](https://github.com/emalgorithm/directed-graph-neural-network). 
+This repository builds on top of Emanuele Rossi's [dir-gnn repository](https://github.com/emalgorithm/directed-graph-neural-network) and Christian Koke's [HoloNet](https://github.com/ChristianKoke/HoloNets/tree/6bcd8b92177f0b075ae0664a1288efb3b589ee3b). 
 
-
-## Citation
-
-```bibtex
-@inproceedings{
-koke2024holonets,
-title={HoloNets: Spectral Convolutions do extend to Directed Graphs},
-author={Christian Koke and Daniel Cremers},
-booktitle={The Twelfth International Conference on Learning Representations},
-year={2024},
-url={https://openreview.net/forum?id=EhmEwfavOW}
-}
-```
-
-## Contact
-If you have any questions, issues or feedback, feel free to reach out to Christian Koke at `christian.koke@tum.de`.
 
