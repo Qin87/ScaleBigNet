@@ -33,7 +33,7 @@ arxiv-year:
   num_layers: 6
   jk: "cat"
   patience: 200
-  conv_type: "fabernet"
+#  conv_type: "fabernet"
   weight_decay: 0.1
   k_plus: 1
   exponent: -0.25
@@ -48,7 +48,7 @@ snap-patents:
   jk: "max"
   patience: 400
   normalize: True
-  conv_type: "fabernet"
+#  conv_type: "fabernet"
   alpha: 0.5
   weight_decay: 0.1
   k_plus: 2 
@@ -64,7 +64,7 @@ directed-roman-empire:
   jk: "cat"
   dropout: 0.2
   patience: 200
-  conv_type: "fabernet"
+#  conv_type: "fabernet"
   weight_decay: 0.1
   k_plus: 1
   exponent: -0.25

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Direct_dataset=(     'arxiv-year'  'snap-patents' 'directed-roman-empire' )  #
+Direct_dataset=( 'arxiv-year'  'snap-patents' 'directed-roman-empire' )  #
 
 # Run sequentially
 for Didataset in "${Direct_dataset[@]}"; do
