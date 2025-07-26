@@ -1,4 +1,4 @@
-
+import gc
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0' # supress: oneDNN custom operations are on
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 3 supress warning:Unable to register cuFFT factory...
@@ -92,6 +92,15 @@ def run(args):
         test_acc = trainer.test(ckpt_path="best", dataloaders=data_loader)[0]["test_acc"]
         test_accs.append(test_acc)
         val_accs.append(val_acc)
+
+        del model
+        del lit_model
+        del trainer
+        del early_stopping_callback
+        del model_summary_callback
+        del model_checkpoint_callback
+        torch.cuda.empty_cache()
+        gc.collect()
 
         print('Used time: ', time.time() - start_time)
 
