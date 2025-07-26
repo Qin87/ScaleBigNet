@@ -75,8 +75,8 @@ def run(args):
             enable_model_summary=False,  # suppresses the model table  # ScaleNet2
             max_epochs=args.num_epochs,
             callbacks=[
-                early_stopping_callback,
-                model_summary_callback,
+                early_stopping_callback,  # comment out will be much slower!
+                # model_summary_callback,
                 model_checkpoint_callback,
             ],
             profiler="simple" if args.profiler else None,
@@ -85,7 +85,9 @@ def run(args):
         )
 
         # Fit the model
+        print('0Used time: ', time.time() - start_time)
         trainer.fit(model=lit_model, train_dataloaders=data_loader)
+        print('1Used time: ', time.time() - start_time)
 
         # Compute validation and test accuracy
         val_acc = model_checkpoint_callback.best_model_score.item()
@@ -104,7 +106,7 @@ def run(args):
 
         print('Used time: ', time.time() - start_time)
 
-    print(f"Test Acc: {np.mean(test_accs)} +- {np.std(test_accs)}")
+    print(f"Test Acc: {np.mean(test_accs) *100:.2f}±{np.std(test_accs) * 100:.2f}")
 
 
 if __name__ == "__main__":
