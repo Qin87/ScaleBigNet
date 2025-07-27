@@ -8,7 +8,7 @@ squirrel:
 #  conv_type: "complex-holonet"
   alpha: 1
   normalize: True
-  k_plus: 5
+#  k_plus: 5
   exponent: -0.25
   weight_penalty: exp
 
@@ -22,7 +22,7 @@ chameleon:
 #  conv_type: "fabernet"
   alpha: 1  # complex use 0. faber use 1
   normalize: True
-  k_plus: 4
+#  k_plus: 4
   exponent: -0.25
   weight_penalty: exp
 
@@ -35,7 +35,7 @@ arxiv-year:
   patience: 200
 #  conv_type: "fabernet"
   weight_decay: 0.1
-  k_plus: 1
+#  k_plus: 1
   exponent: -0.25
   lrelu_slope: 0
   weight_penalty: exp
@@ -51,7 +51,7 @@ snap-patents:
 #  conv_type: "fabernet"
   alpha: 0.5
   weight_decay: 0.1
-  k_plus: 2 
+#  k_plus: 2
   exponent: -0.25
   weight_penalty: exp
   lrelu_slope:  0
@@ -66,7 +66,7 @@ directed-roman-empire:
   patience: 200
 #  conv_type: "fabernet"
   weight_decay: 0.1
-  k_plus: 1
+#  k_plus: 1
   exponent: -0.25
   lrelu_slope: 0
   weight_penalty: exp
