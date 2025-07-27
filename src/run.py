@@ -24,6 +24,14 @@ import logging
 logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)   #
 import time
 
+original_load = torch.load
+
+def custom_load(*args, **kwargs):
+    kwargs['weights_only'] = False
+    return original_load(*args, **kwargs)
+
+torch.load = custom_load
+
 def run(args):
     torch.manual_seed(args.seed)
 

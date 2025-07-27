@@ -19,7 +19,7 @@ chameleon:
   num_layers: 5
   jk: "cat"
   patience: 400
-  conv_type: "fabernet"
+#  conv_type: "fabernet"
   alpha: 1  # complex use 0. faber use 1
   normalize: True
   k_plus: 4
