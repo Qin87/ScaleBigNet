@@ -1,16 +1,16 @@
 # 76.71 ± 1.92
 squirrel:
-  lr: 0.01
-  hidden_dim: 128
-  num_layers: 4
-  jk: "max"
-  patience: 400
+#  lr: 0.01
+#  hidden_dim: 128
+#  num_layers: 4
+#  jk: "max"
+#  patience: 400
 #  conv_type: "complex-holonet"
-  alpha: 1
-  normalize: True
+#  alpha: 1
+#  normalize: True
 #  k_plus: 5
-  exponent: -0.25
-  weight_penalty: exp
+#  exponent: -0.25
+#  weight_penalty: exp
 
 # 80.33 ± 1.19
 chameleon:
