@@ -1,7 +1,7 @@
 #!/bin/bash
 
-Direct_dataset=('chameleon' 'arxiv-year' 'snap-patents' 'directed-roman-empire')
-K_values=( 4 5)
+Direct_dataset=('arxiv-year' 'snap-patents' 'directed-roman-empire')
+K_values=(5 3)
 Weight_penalties=("exp" "lin" "None")
 Dropouts=(0.0 0.2 0.5)
 Hidden_dims=(32 64 128 256)
@@ -13,20 +13,20 @@ Patiences=( 400 800 200)
 Alphas=(0 0.2 0.5 0.8 1)
 Normalize_vals=(1 0)
 
+                                    for normalize in "${Normalize_vals[@]}"; do
 for Didataset in "${Direct_dataset[@]}"; do
     for k in "${K_values[@]}"; do
         for penalty in "${Weight_penalties[@]}"; do
             for dropout in "${Dropouts[@]}"; do
-                for hidden in "${Hidden_dims[@]}"; do
-                    for layers in "${Num_layers[@]}"; do
-                        for lr in "${Learning_rates[@]}"; do
                             for exp in "${Exponents[@]}"; do
                               for jk in "${JK_values[@]}"; do
                                 for patience in "${Patiences[@]}"; do
                                   for alpha in "${Alphas[@]}"; do
-                                    for normalize in "${Normalize_vals[@]}"; do
+                        for lr in "${Learning_rates[@]}"; do
+                for hidden in "${Hidden_dims[@]}"; do
+                    for layers in "${Num_layers[@]}"; do
                                 echo "Running: dataset=$Didataset, k_plus=$k, weight_penalty=$penalty, dropout=$dropout, hidden_dim=$hidden, num_layers=$layers, lr=$lr, exponent=$exp"
-                                python -m src.run \
+                                python3 -m src.run \
                                     --dataset="$Didataset" \
                                     --k_plus="$k" \
                                     --weight_penalty="$penalty" \
