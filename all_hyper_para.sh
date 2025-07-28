@@ -10,7 +10,7 @@ Learning_rates=(0.1 0.05 0.01 0.005 0.001 0.0005)
 Exponents=(-0.25 -0.5 -0.125)
 JK_values=("max" "cat" "None")
 Patiences=( 400 800 200)
-Alphas=(0 0.2 0.5 0.8 1)
+Alphas=(0.5)
 Normalize_vals=(1 0)
 
                                     for normalize in "${Normalize_vals[@]}"; do
