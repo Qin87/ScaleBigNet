@@ -1,15 +1,15 @@
 #!/bin/bash
 
 Direct_dataset=('chameleon' 'arxiv-year' 'snap-patents' 'directed-roman-empire')
-K_values=(1 2 3 4 5)
+K_values=( 4 5)
 Weight_penalties=("exp" "lin" "None")
-Dropouts=(0.0 0.2 0.5 0.8)
+Dropouts=(0.0 0.2 0.5)
 Hidden_dims=(32 64 128 256)
 Num_layers=(1 2 3 4 5 6 7 8)
 Learning_rates=(0.1 0.05 0.01 0.005 0.001 0.0005)
 Exponents=(-0.25 -0.5 -0.125)
 JK_values=("max" "cat" "None")
-Patiences=(200 400 800 1600)
+Patiences=( 400 800 200)
 Alphas=(0 0.2 0.5 0.8 1)
 Normalize_vals=(1 0)
 
