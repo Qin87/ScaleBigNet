@@ -8,3 +8,4 @@
 *.mat
 *.npy
 *.npz
+job-*

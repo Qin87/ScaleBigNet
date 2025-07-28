@@ -22,9 +22,9 @@ parser.add_argument("--dropout", type=float, help="Feature dropout", default=0.0
 parser.add_argument("--alpha", type=float, help="Direction convex combination params", default=0.5)
 parser.add_argument("--learn_alpha", action="store_true")
 parser.add_argument("--conv_type", type=str, help="Selects Convolutional Layer", default="scalenet")
-parser.add_argument("--normalize", action="store_true")
+parser.add_argument("--normalize", type=int, default=0)
 parser.add_argument("--jk", type=str, choices=["max", "cat", None], default="max")
-parser.add_argument("--weight_penalty", type=str, choices=["exp", "lin", None], default="exp")
+parser.add_argument("--weight_penalty", type=str, choices=["exp", "lin", "None"], default="exp")
 parser.add_argument("--k_plus", type=int, help="Polynomial order", default=3)
 parser.add_argument("--exponent", type=float, help="exponent in norm", default= -0.25)
 parser.add_argument("--lrelu_slope", type=float, help="negative slope of Leaky Relu", default= -1.0)
@@ -38,12 +38,13 @@ parser.add_argument("--patience", type=int, help="Patience for early stopping", 
 parser.add_argument("--num_runs", type=int, help="Max number of runs", default=10)
 
 ### System Args
-parser.add_argument("--use_best_hyperparams", action="store_false")
+parser.add_argument("--use_best_hyperparams", action="store_true")
 parser.add_argument("--gpu_idx", type=int, help="Indexes of gpu to run program on", default=0)
 parser.add_argument("--num_workers", type=int, help="Num of workers for the dataloader", default=0)
-parser.add_argument("--log", type=str, help="Log Level", default="INFO", choices=["DEBUG", "INFO", "WARNING"])
 parser.add_argument("--profiler", action="store_true")
 
 args = parser.parse_args()
-logger = logging.getLogger(__name__)
-logger.setLevel(level=getattr(logging, args.log.upper(), None))
+if args.weight_penalty == "None":
+    args.weight_penalty = None
+if args.jk == "None":
+    args.jk = None

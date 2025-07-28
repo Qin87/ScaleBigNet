@@ -1,7 +1,7 @@
 import os
 import yaml
-
 import torch
+from datetime import datetime
 
 
 def use_best_hyperparams(args, dataset_name):
@@ -31,6 +31,15 @@ def get_available_accelerator():
 
 
 
+def log_file(net_to_print, dataset_to_print, args):
+    log_file_name = dataset_to_print+'_'+args.conv_type+'_'+net_to_print+'_a'+str(args.alpha)+'_k'+ str(args.k_plus)+'_lay'+str(args.num_layers)+'_lr'+str(args.lr)+'_split'+str(args.num_runs)+'_hid'+str(args.hidden_dim)+'_'+args.weight_penalty+'_dp'+str(args.dropout)+'_n'+str(args.normalize)
 
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file_name_with_timestamp = f"{log_file_name}_{timestamp}.log"
+
+    log_directory = "~/Documents/Benlogs/"  # Change this to your desired directory
+    log_directory = os.path.expanduser(log_directory)
+
+    return log_directory, log_file_name_with_timestamp
 
 
