@@ -46,20 +46,20 @@ arxiv-year:
 
 # 75.10 ± 0.03
 snap-patents:
-  alpha: 0.5
+#  alpha: 0.5
   num_runs: 5  # original split
-#  lr: 0.01
-#  hidden_dim: 32
-#  num_layers: 5
-#  jk: "max"
-#  patience: 400
-#  normalize: True
+  lr: 0.01
+  hidden_dim: 32
+  num_layers: 5
+  jk: "max"
+  patience: 400
+  normalize: True
 #  conv_type: "fabernet"
-#  weight_decay: 0.1
-#  k_plus: 2
-#  exponent: -0.25
+  weight_decay: 0.1
+  k_plus: 2
+  exponent: -0.25
 #  weight_penalty: exp
-#  lrelu_slope:  0
+  lrelu_slope:  0
 
 # 92.24 ± 0.432
 directed-roman-empire:
