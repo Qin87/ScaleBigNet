@@ -72,6 +72,8 @@ class ScaleConv(torch.nn.Module):
             sum_src_to_dst = sum_src_to_dst + self.lin_src_to_dst_zero(x)
             sum_dst_to_src = sum_dst_to_src + self.lin_dst_to_src_zero(x)
 
+        totalB = 0
+        totalC = 0
         if self.K_plus > 1:
             yy = y
             ytyt = y_t
@@ -84,8 +86,7 @@ class ScaleConv(torch.nn.Module):
             yyt = self.adj_t_norm @ yyt
             ytyt = self.adj_t_norm @ ytyt
 
-            totalB = 0
-            totalC = 0
+
 
             def get_weight(i):
                 if self.weight_penalty == 'exp':
