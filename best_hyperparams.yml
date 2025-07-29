@@ -9,7 +9,7 @@ squirrel:
   patience: 400
 #  conv_type: "complex-holonet"
   normalize: True
-  k_plus: 5
+#  k_plus: 5
   exponent: -0.25
 #  weight_penalty: exp
 
