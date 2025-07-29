@@ -26,7 +26,7 @@ chameleon:
   normalize: True
 #  k_plus: 4
   exponent: -0.25
-  weight_penalty: exp
+#  weight_penalty: exp
 
 # 64.43 ± 0.28
 arxiv-year:

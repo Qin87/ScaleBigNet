@@ -1,11 +1,11 @@
 #!/bin/bash
 
-Direct_dataset=('arxiv-year')  #  'snap-patents' 'directed-roman-empire'
+Direct_dataset=('chameleon')  #  'snap-patents' 'directed-roman-empire'
 alphas=(0 0.5 1 -1)
 betas=(0 0.5 1 -1)
 gammas=(0 0.5 1 -1)
 
-Weight_penalties=("exp" "lin" "None")
+Weight_penalties=("None")   # "exp" "lin"
 
 
 for dataset in "${Direct_dataset[@]}"; do
