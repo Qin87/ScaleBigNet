@@ -63,7 +63,7 @@ snap-patents:
 
 # 92.24 ± 0.432
 directed-roman-empire:
-  alpha: 0.5
+#  alpha: 0.5
   num_runs: 10  # original split
   lr: 0.01
   hidden_dim: 256
@@ -76,5 +76,5 @@ directed-roman-empire:
 #  k_plus: 1
   exponent: -0.25
   lrelu_slope: 0
-  weight_penalty: exp
+#  weight_penalty: exp
   zero_order: True
