@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Direct_dataset=('arxiv-year' 'snap-patents' 'directed-roman-empire')
+Direct_dataset=('arxiv-year')  #  'snap-patents' 'directed-roman-empire'
 alphas=(0 0.5 1 -1)
 betas=(0 0.5 1 -1)
 gammas=(0 0.5 1 -1)

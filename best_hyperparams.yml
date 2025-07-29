@@ -42,7 +42,7 @@ arxiv-year:
 #  k_plus: 1
   exponent: -0.25
   lrelu_slope: 0
-  weight_penalty: exp
+#  weight_penalty: exp
 
 # 75.10 ± 0.03
 snap-patents:
