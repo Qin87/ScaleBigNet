@@ -1,22 +1,22 @@
 # 76.71 ± 1.92
 squirrel:
-  alpha: 1
+#  alpha: 1
   num_runs: 10  # original split
-#  lr: 0.01
-#  hidden_dim: 128
-#  num_layers: 4
-#  jk: "max"
-#  patience: 400
+  lr: 0.01
+  hidden_dim: 128
+  num_layers: 4
+  jk: "max"
+  patience: 400
 #  conv_type: "complex-holonet"
-#  normalize: True
-#  k_plus: 5
-#  exponent: -0.25
+  normalize: True
+  k_plus: 5
+  exponent: -0.25
 #  weight_penalty: exp
 
 # 80.33 ± 1.19
 chameleon:
   num_runs: 10  # original split
-  alpha: 1  # complex use 0. faber use 1
+#  alpha: 1  # complex use 0. faber use 1
   lr: 0.005
   hidden_dim: 128
   num_layers: 5
