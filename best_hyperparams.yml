@@ -50,7 +50,7 @@ snap-patents:
   num_runs: 5  # original split
   lr: 0.01
   hidden_dim: 32
-  num_layers: 5
+#  num_layers: 5
   jk: "max"
   patience: 400
   normalize: True
