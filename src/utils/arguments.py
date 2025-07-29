@@ -5,7 +5,7 @@ parser = argparse.ArgumentParser("Directed Graph Neural Network")
 parser.add_argument("--seed", type=int, help="manual seed", default=0)
 
 ### Dataset Args
-parser.add_argument("--dataset", type=str, help="Name of dataset", default="chameleon")
+parser.add_argument("--dataset", type=str, help="Name of dataset", default="arxiv-year")
 parser.add_argument("--dataset_directory", type=str, help="Directory to save datasets", default="dataset")
 parser.add_argument("--checkpoint_directory", type=str, help="Directory to save checkpoints", default="checkpoint")
 

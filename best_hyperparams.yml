@@ -1,6 +1,7 @@
 # 76.71 ± 1.92
 squirrel:
   alpha: 1
+  num_runs: 10  # original split
 #  lr: 0.01
 #  hidden_dim: 128
 #  num_layers: 4
@@ -14,6 +15,7 @@ squirrel:
 
 # 80.33 ± 1.19
 chameleon:
+  num_runs: 10  # original split
   alpha: 1  # complex use 0. faber use 1
   lr: 0.005
   hidden_dim: 128
@@ -29,6 +31,7 @@ chameleon:
 # 64.43 ± 0.28
 arxiv-year:
   alpha: 0.5
+  num_runs: 5  # original split
   lr: 0.005
   hidden_dim: 256
   num_layers: 6
@@ -44,6 +47,7 @@ arxiv-year:
 # 75.10 ± 0.03
 snap-patents:
   alpha: 0.5
+  num_runs: 5  # original split
 #  lr: 0.01
 #  hidden_dim: 32
 #  num_layers: 5
@@ -60,6 +64,7 @@ snap-patents:
 # 92.24 ± 0.432
 directed-roman-empire:
   alpha: 0.5
+  num_runs: 10  # original split
   lr: 0.01
   hidden_dim: 256
   num_layers: 5
