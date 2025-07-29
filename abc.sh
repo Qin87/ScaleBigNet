@@ -7,6 +7,7 @@ gammas=(0 0.5 1 -1)
 
 Weight_penalties=("exp" "lin" "None")
 
+
 for dataset in "${Direct_dataset[@]}"; do
     for penalty in "${Weight_penalties[@]}"; do
     for alpha in "${alphas[@]}"; do
