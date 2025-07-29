@@ -30,7 +30,7 @@ chameleon:
 
 # 64.43 ± 0.28
 arxiv-year:
-  alpha: 0.5
+#  alpha: 0.5
   num_runs: 5  # original split
   lr: 0.005
   hidden_dim: 256
@@ -38,11 +38,11 @@ arxiv-year:
   jk: "cat"
   patience: 200
 #  conv_type: "fabernet"
-#  weight_decay: 0.1
+  weight_decay: 0.1
 #  k_plus: 1
-#  exponent: -0.25
-#  lrelu_slope: 0
-#  weight_penalty: exp
+  exponent: -0.25
+  lrelu_slope: 0
+  weight_penalty: exp
 
 # 75.10 ± 0.03
 snap-patents:
