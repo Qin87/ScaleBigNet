@@ -34,7 +34,7 @@ def get_available_accelerator():
 def log_file(net_to_print, dataset_to_print, args):
     log_file_name = dataset_to_print+'_'+args.conv_type+'_'+net_to_print+'_a'+str(args.alpha)+'_b'+str(args.beta)+'_c'+str(args.gamma)+'_k'+ str(args.k_plus)+'_lay'+str(args.num_layers)+'_lr'+str(args.lr)+'_split'+str(args.num_runs)+'_hid'+str(args.hidden_dim)+'_'+str(args.weight_penalty)+'_dp'+str(
         args.dropout)+'_n'+str(
-        args.normalize)+'_P'+str(args.patience)+'_jk'+args.jk+str(args.exponent)
+        args.normalize)+'_P'+str(args.patience)+'_jk'+args.jk+str(args.exponent)+'_s'+str(args.seed)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_file_name_with_timestamp = f"{log_file_name}_{timestamp}.log"
