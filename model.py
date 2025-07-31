@@ -75,19 +75,6 @@ class ScaleConv(torch.nn.Module):
         totalB = 0
         totalC = 0
         if self.K_plus > 1:
-            yy = y
-            ytyt = y_t
-            yty = y_t
-            yyt = y
-
-            yy = self.adj_norm @ yy
-            yty = self.adj_norm @ yty
-
-            yyt = self.adj_t_norm @ yyt
-            ytyt = self.adj_t_norm @ ytyt
-
-
-
             def get_weight(i):
                 if self.weight_penalty == 'exp':
                     return 1 / (2 ** i)
@@ -97,8 +84,17 @@ class ScaleConv(torch.nn.Module):
                     return 1
                 else:
                     raise ValueError(f"Weight penalty type {self.weight_penalty} not supported")
-
+            yy = y
+            ytyt = y_t
+            yty = y
+            yyt = y_t
             for i in range(1, self.K_plus):
+                yy = self.adj_norm @ yy
+                yty = self.adj_t_norm @ yty
+
+                yyt = self.adj_norm @ yyt
+                ytyt = self.adj_t_norm @ ytyt
+
                 w = get_weight(i)
 
                 if self.beta != -1:

@@ -4,7 +4,7 @@ squirrel:
   num_runs: 10  # original split
   lr: 0.01
   hidden_dim: 128
-  num_layers: 4
+#  num_layers: 4
   jk: "max"
   patience: 400
 #  conv_type: "complex-holonet"
@@ -19,7 +19,7 @@ chameleon:
 #  alpha: 1  # complex use 0. faber use 1
   lr: 0.005
   hidden_dim: 128
-  num_layers: 5
+#  num_layers: 5
   jk: "cat"
   patience: 400
 #  conv_type: "fabernet"
