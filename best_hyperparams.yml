@@ -35,7 +35,7 @@ arxiv-year:
   lr: 0.005
   hidden_dim: 256
   num_layers: 6
-  jk: "cat"
+#  jk: "cat"
   patience: 200
 #  conv_type: "fabernet"
   weight_decay: 0.1
