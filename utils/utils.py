@@ -33,7 +33,7 @@ def get_available_accelerator():
 
 def log_file(net_to_print, dataset_to_print, args):
     log_file_name = dataset_to_print+'_'+args.conv_type+'_'+net_to_print
-    if args.conv_type == 'scalenet':
+    if args.conv_type == 'scalenet' and args.k_plus > 1:
         log_file_name += '_a'+str(args.alpha)+'_b'+str(args.beta)+'_c'+str(args.gamma)
     log_file_name += '_k'+ str(args.k_plus)+'_lay'+str(args.num_layers)+'_lr'+str(
         args.lr)+'_split'+str(args.num_runs)+'_hid'+str(args.hidden_dim)+'_'+str(args.weight_penalty)+'_dp'+str(

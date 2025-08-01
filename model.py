@@ -132,15 +132,9 @@ class FaberConv(torch.nn.Module):
         self.zero_order = zero_order
 
         if self.zero_order:
-            #Zero Order Lins
-            #Source to destination 
             self.lin_src_to_dst_zero = Linear(input_dim, output_dim)
-            #Source to destination 
             self.lin_dst_to_src_zero = Linear(input_dim, output_dim)
 
-
-
-        #Lins for positive powers:
         self.lins_src_to_dst = torch.nn.ModuleList([
             Linear(input_dim, output_dim) for _ in range(K_plus)
         ])
@@ -156,8 +150,6 @@ class FaberConv(torch.nn.Module):
         if self.adj_norm is None:
             row, col = edge_index
             num_nodes = x.shape[0]
-
-            
 
             adj = SparseTensor(row=row, col=col, sparse_sizes=(num_nodes, num_nodes))
             self.adj_norm = get_norm_adj(adj, norm="dir", exponent = self.exponent)
