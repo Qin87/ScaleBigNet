@@ -7,7 +7,7 @@ squirrel:
   num_layers: 4
   jk: "max"
   patience: 400
-  conv_type: "complex-holonet"
+  conv_type: "fabernet"
   normalize: True
   k_plus: 5
   exponent: -0.25
