@@ -54,7 +54,7 @@ snap-patents:
   jk: "max"
   patience: 400
   normalize: True
-  conv_type: "fabernet"
+#  conv_type: "fabernet"
   weight_decay: 0.1
   k_plus: 2
   exponent: -0.25
