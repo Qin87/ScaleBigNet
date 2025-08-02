@@ -30,12 +30,12 @@ chameleon:
 
 # 64.43 ± 0.28
 arxiv-year:
-#  alpha: 0.5
+  alpha: 0.5
   num_runs: 5  # original split
   lr: 0.005
   hidden_dim: 256
   num_layers: 6
-#  jk: "cat"
+  jk: "cat"
   patience: 200
 #  conv_type: "fabernet"
   weight_decay: 0.1
@@ -76,5 +76,5 @@ directed-roman-empire:
 #  k_plus: 1
   exponent: -0.25
   lrelu_slope: 0
-  weight_penalty: exp
+#  weight_penalty: exp
   zero_order: True
