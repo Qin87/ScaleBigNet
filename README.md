@@ -1,23 +1,11 @@
 # ScaleBigNet: Multi-scale GNN for large graphs
 
- - [Overview](#overview)
-  - [Getting Started](#getting-started)
-    - [Setting Up the Environment](#setting-up-the-environment)
-    - [Installing Dependencies](#installing-dependencies)
-    - [Code Structure](#code-structure)
-  - [Running Experiments](#running-experiments)
-    - [Node Classification Experiments](#node-classification-experiments)
-  - [Command Line Arguments](#command-line-arguments)
-    - [Dataset Arguments](#dataset-arguments)
-    - [Preprocessing Arguments](#preprocessing-arguments)
-    - [Model Arguments](#model-arguments)
-    - [Training Args](#training-args)
-
 ## Overview
 
 ScaleNet leverage multi-scale features to learn from graph to get better performance than single-scale models. 
-However, higher-scaled feature learning in ScaleNet involves matrix multiplication of adjacency matrix, whose dimensions are node number of graph.
-ScaleBigNet avoids AA, by A(AX) instead of (AA)X to get aggregated feature.
+ScaleBigNet avoids multiplication between adjacency matrices (i.e., avoids A^2). 
+Instead of computing (AA)X as in ScaleNet,  it uses A(AX) to obtain aggregated features.
+
 
 ## Getting Started
 
@@ -25,29 +13,26 @@ To get up and running with the project, you need to first set up your environmen
 
 ### Setting Up the Environment
 
-The project is designed to run on Python 3.10. We recommend using [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) to set up the environment as follows:
+Tested Python version: 3.9-3.12. We recommend using [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) to set up the environment as follows:
 
 ```bash
-conda create -n holonet python=3.10
-conda activate holonet
+conda create -n scalebignet python=3.10
+conda activate scalebignet
 ```
 
 ### Installing Dependencies
 
 Once the environment is activated, install the required packages:
 
-```bash
-conda install pytorch==2.0.1 pytorch-cuda=11.7 -c pytorch -c nvidia
-conda install pyg pytorch-sparse -c pyg
-pip install ogb==1.3.6
-pip install pytorch_lightning==2.0.2
-pip install gdown==4.7.1
-```
 
-Please ensure that the version of `pytorch-cuda` matches your CUDA version. If your system does not have a GPU, use the following command to install PyTorch:
-
+1. Follow the official instructions to install [PyTorch](https://pytorch.org/get-started/previous-versions/).
+2. Install [PyTorch Geometric](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html).
+3. For `pytorch-scatter` and `pytorch-sparse`, download the packages from [this link](https://pytorch-geometric.com/whl/torch-2.3.0%2Bcu121.html) according to your PyTorch, Python, and OS version. Then, use `pip` to install them.
+4. Other packages to install:
 ```bash
-conda install pytorch==2.0.1 -c pytorch
+pip install ogb
+pip install pytorch_lightning
+pip install gdown
 ```
 
 For M1/M2/M3 Mac users, `pyg` (PyTorch Geometric) needs to be installed from source. Detailed instructions for this process can be found [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#installation-from-source).
@@ -68,7 +53,7 @@ This section provides instructions on how to reproduce the experiments outlined 
 To reproduce the results of Table 1 in the paper, use the following command:
 
 ```bash
-python -m src.run --dataset chameleon --use_best_hyperparams --num_runs 10
+python run.py --dataset chameleon --use_best_hyperparams --num_runs 10
 ```
 
 The `--dataset` parameter specifies the dataset to be used. Replace `chameleon` with the name of the dataset you want to use. 
@@ -95,24 +80,24 @@ The following command line arguments can be used with the code:
 
 ### Model Arguments
 
-| Argument         | Type   | Default Value | Description                         |
-| ---------------- | ------ | ------------- | ----------------------------------- |
-| --model          | str    | "gnn"         | Model type                          |
-| --hidden_dim     | int    | 64            | Hidden dimension of model           |
-| --num_layers     | int    | 3             | Number of GNN layers                |
-| --dropout        | float  | 0.0           | Feature dropout                     |
-| --alpha          | float  | 0.5           | Direction convex combination params |
-| --learn_alpha    | action | -             | If set, learn alpha                 |
-| --conv_type      | str    | "fabernet"    | Model                               |
-| --normalize      | action | -             | If set, normalize                   |
-| --jk             | str    | "max"         | Either "max", "cat" or None         |
-| --weight_penalty | str    | "exp"         | Either "exp", "line" or None        |
-| --k_plus         | int    | 3             | Polynomial Order                    |
-| --exponent       | float  | -0.25         | normalization in adj-matrix         |
-| --lrelu_slope    | float  | -1            | LeakyRelu slope                     |
-| --zero_order     | bool   | False         | Whether to use zero-order term      |
-
-
+| Argument         | Type   | Default Value | Description                                             |
+|------------------| ------ |--------------|---------------------------------------------------------|
+| --model          | str    | "gnn"        | Model type                                              |
+| --hidden_dim     | int    | 64           | Hidden dimension of model                               |
+| --num_layers     | int    | 3            | Number of GNN layers                                    |
+| --dropout        | float  | 0.0          | Feature dropout                                         |
+| --alpha          | float  | 0.5          | Direction convex combination params between A and At    |
+| --beta           | float  | 0.5          | Direction convex combination params between AAt and AtA |
+| --gamma          | float  | 0.5          | Direction convex combination params between AA and AtAt |
+| --learn_alpha    | action | -            | If set, learn alpha                                     |
+| --conv_type      | str    | "scalenet"   | Model                                                   |
+| --normalize      | action | -            | If set, normalize                                       |
+| --jk             | str    | "max"        | Either "max", "cat" or None                             |
+| --weight_penalty | str    | "exp"        | Either "exp", "line" or None                            |
+| --k_plus         | int    | 3            | Polynomial Order                                        |
+| --exponent       | float  | -0.25        | normalization in adj-matrix                             |
+| --lrelu_slope    | float  | -1           | LeakyRelu slope                                         |
+| --zero_order     | bool   | False        | Whether to use zero-order term                          |
 
 
 ### Training Args
@@ -121,13 +106,9 @@ The following command line arguments can be used with the code:
 | ------------------- | ----- | ------------- | -------------------------------------------------- |
 | --lr                | float | 0.001         | Learning Rate                                      |
 | --weight_decay      | float | 0.0           | Weight decay (if only real weights are used)       |
-| --imag_weight_decay | float | 0.0           | Weight decay for imaginary part of weight matrices |
-| --real_weight_decay | float | 0.0           | Weight decay for real      part of weight matrices |
 | --num_epochs        | int   | 10000         | Max number of epochs                               |
 | --patience          | int   | 10            | Patience for early stopping                        |
 | --num_runs          | int   | 1             | Max number of runs                                 |
-
-
 
 
 
