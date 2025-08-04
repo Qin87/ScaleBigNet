@@ -23,7 +23,7 @@ parser.add_argument("--alpha", type=float, help="Direction convex combination pa
 parser.add_argument("--beta", type=float, help="Direction convex combination params: AAt, AtA", default=1)
 parser.add_argument("--gamma", type=float, help="Direction convex combination params: AA, AtAt", default=-1)
 parser.add_argument("--learn_alpha", action="store_true")
-parser.add_argument("--conv_type", type=str, help="Selects Convolutional Layer", default="scalenet")
+parser.add_argument("--conv_type", type=str, help="Selects Convolutional Layer", default="scale")
 parser.add_argument("--normalize", type=int, default=0)
 parser.add_argument("--jk", type=str, choices=["max", "cat", "None"], default="max")
 parser.add_argument("--weight_penalty", type=str, choices=["exp", "lin", "None"], default="None")

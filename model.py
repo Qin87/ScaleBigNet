@@ -15,7 +15,7 @@ def get_conv(conv_type, input_dim, output_dim, args, K_plus = 3, K_minus = 1, ze
         return GCNConv(input_dim, output_dim, add_self_loops=False)
     elif conv_type == "fabernet":
         return FaberConv(input_dim, output_dim, alpha=args.alpha, K_plus = K_plus, exponent = exponent, weight_penalty = weight_penalty, zero_order = zero_order)
-    elif conv_type == "scalenet":
+    elif conv_type == "scale":
         return ScaleConv(input_dim, output_dim, args, K_plus = K_plus, exponent = exponent, weight_penalty = weight_penalty, zero_order = zero_order)
     else:
         raise ValueError(f"Convolution type {conv_type} not supported")

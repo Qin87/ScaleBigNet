@@ -9,7 +9,7 @@ arxiv-year:
   num_layers: 6
   jk: "cat"
   patience: 200
-  conv_type: "scalenet"
+  conv_type: "scale"
   weight_decay: 0.1
   k_plus: 2
   exponent: -0.25
@@ -28,7 +28,7 @@ snap-patents:
   jk: "max"
   patience: 400
   normalize: True
-  conv_type: "scalenet"
+  conv_type: "scale"
   weight_decay: 0.1
   k_plus: 2
   exponent: -0.25
@@ -47,7 +47,7 @@ directed-roman-empire:
   jk: "cat"
   dropout: 0.2
   patience: 200
-  conv_type: "scalenet"
+  conv_type: "scale"
   weight_decay: 0.1
   k_plus: 3
   exponent: -0.25
@@ -66,7 +66,7 @@ squirrel:
   num_layers: 4
   jk: "max"
   patience: 400
-  conv_type: "scalenet"
+  conv_type: "scale"
   normalize: True
   k_plus: 2
   exponent: -0.25
@@ -84,7 +84,7 @@ chameleon:
   num_layers: 5
   jk: "cat"
   patience: 400
-  conv_type: "scalenet"
+  conv_type: "scale"
   normalize: True
   k_plus: 2
   exponent: -0.25
