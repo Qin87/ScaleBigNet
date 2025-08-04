@@ -111,7 +111,6 @@ The following command line arguments can be used with the code:
 | --num_runs          | int   | 1             | Max number of runs                                 |
 
 
-
 ## Credit
 This repository builds on top of Emanuele Rossi's [dir-gnn repository](https://github.com/emalgorithm/directed-graph-neural-network) and Christian Koke's [HoloNet](https://github.com/ChristianKoke/HoloNets/tree/6bcd8b92177f0b075ae0664a1288efb3b589ee3b). 
 
