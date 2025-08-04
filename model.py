@@ -27,7 +27,6 @@ class ScaleConv(torch.nn.Module):
     '''
     def __init__(self, input_dim, output_dim, args, K_plus=1, exponent=-0.25, weight_penalty='exp', zero_order=False):
         super().__init__()
-
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.K_plus = K_plus
