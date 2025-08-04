@@ -29,8 +29,6 @@ def get_available_accelerator():
     else:
         return "cpu"
 
-
-
 def log_file(net_to_print, dataset_to_print, args):
     log_file_name = dataset_to_print+'_'+args.conv_type+'_'+net_to_print
     if args.conv_type == 'scalenet' and args.k_plus > 1:
