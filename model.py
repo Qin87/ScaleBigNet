@@ -80,7 +80,7 @@ class ScaleConv(torch.nn.Module):
                     return 1 / (2 ** i)
                 elif self.weight_penalty == 'lin':
                     return 1 / i
-                elif self.weight_penalty is None:
+                elif self.weight_penalty == 'None' or self.weight_penalty is None:
                     return 1
                 else:
                     raise ValueError(f"Weight penalty type {self.weight_penalty} not supported")
@@ -350,10 +350,7 @@ class GNN(torch.nn.Module):
             self.convs.append(get_conv(conv_type, hidden_dim, output_dim, args, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty))
 
         if jumping_knowledge is not None:
-            if self.conv_type == "complex-fabernet":
-                input_dim = 2 * hidden_dim * num_layers if jumping_knowledge == "cat" else 2 * hidden_dim
-            else:
-                input_dim = hidden_dim * num_layers if jumping_knowledge == "cat" else hidden_dim
+            input_dim = hidden_dim * num_layers if jumping_knowledge == "cat" else hidden_dim
             self.lin = Linear(input_dim, num_classes)
             self.jump = JumpingKnowledge(mode=jumping_knowledge, channels=hidden_dim, num_layers=num_layers)
 

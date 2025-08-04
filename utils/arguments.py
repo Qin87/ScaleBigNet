@@ -5,7 +5,7 @@ parser = argparse.ArgumentParser("Directed Graph Neural Network")
 parser.add_argument("--seed", type=int, help="manual seed", default=2)
 
 ### Dataset Args
-parser.add_argument("--dataset", type=str, help="Name of dataset", default="directed-roman-empire")
+parser.add_argument("--dataset", type=str, help="Name of dataset", default="arxiv-year")
 parser.add_argument("--dataset_directory", type=str, help="Directory to save datasets", default="dataset")
 parser.add_argument("--checkpoint_directory", type=str, help="Directory to save checkpoints", default="checkpoint")
 
@@ -40,7 +40,7 @@ parser.add_argument("--patience", type=int, help="Patience for early stopping", 
 parser.add_argument("--num_runs", type=int, help="Max number of runs", default=10)
 
 ### System Args
-parser.add_argument("--use_best_hyperparams", action="store_true")
+parser.add_argument("--use_best_hyperparams", type=int, default=1, help="whether use parameters in best_hyperparameters.yml")
 parser.add_argument("--gpu_idx", type=int, help="Indexes of gpu to run program on", default=0)
 parser.add_argument("--num_workers", type=int, help="Num of workers for the dataloader", default=0)
 parser.add_argument("--profiler", action="store_true")

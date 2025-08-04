@@ -53,7 +53,7 @@ This section provides instructions on how to reproduce the experiments outlined 
 To reproduce the results of Table 1 in the paper, use the following command:
 
 ```bash
-python run.py --dataset chameleon --use_best_hyperparams --num_runs 10
+python run.py --dataset chameleon --use_best_hyperparams=1 --num_runs 10
 ```
 
 The `--dataset` parameter specifies the dataset to be used. Replace `chameleon` with the name of the dataset you want to use. 
