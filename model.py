@@ -181,6 +181,13 @@ class FaberConv(torch.nn.Module):
 
                     sum_src_to_dst = sum_src_to_dst + self.lins_src_to_dst[i](y)/i
                     sum_dst_to_src = sum_dst_to_src + self.lins_dst_to_src[i](y_t)/i
+            elif self.weight_penalty == None:
+                for i in range(1,self.K_plus):
+                    y   = self.adj_norm   @ y
+                    y_t = self.adj_t_norm @ y
+
+                    sum_src_to_dst = sum_src_to_dst + self.lins_src_to_dst[i](y)
+                    sum_dst_to_src = sum_dst_to_src + self.lins_dst_to_src[i](y_t)
             else:
                 raise ValueError(f"Weight penalty type {self.weight_penalty} not supported")
        
