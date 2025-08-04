@@ -56,7 +56,7 @@ To reproduce the results of Table 1 in the paper, use the following command:
 python run.py --dataset arxiv-year --use_best_hyperparams=1 --num_runs 10
 ```
 
-The `--dataset` parameter specifies the dataset to be used. Replace `chameleon` with the name of the dataset you want to use. 
+The `--dataset` parameter specifies the dataset to be used. Replace `arxiv-year` with the name of the dataset you want to use. 
 
 ## Command Line Arguments
 
@@ -66,7 +66,7 @@ The following command line arguments can be used with the code:
 
 | Argument               | Type | Default Value | Description                   |
 | ---------------------- | ---- | ------------- | ----------------------------- |
-| --dataset              | str  | "chameleon"   | Name of the dataset           |
+| --dataset              | str  | "arxiv-year"   | Name of the dataset           |
 | --dataset_directory    | str  | "dataset"     | Directory to save datasets    |
 | --checkpoint_directory | str  | "checkpoint"  | Directory to save checkpoints |
 
