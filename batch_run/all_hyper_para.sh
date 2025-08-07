@@ -1,7 +1,7 @@
 #!/bin/bash
 
-Direct_dataset=('arxiv-year' 'snap-patents' 'directed-roman-empire')
-K_values=(3)
+Direct_dataset=('penn94' 'snap-patents' 'directed-roman-empire')
+K_values=(2 3)
 Weight_penalties=("exp" "lin" "None")
 Dropouts=(0.0 0.2 0.5)
 Hidden_dims=(32 64 128 256)

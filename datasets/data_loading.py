@@ -61,9 +61,6 @@ def get_dataset(name: str, root_dir: str, homophily=None, undirected=False, self
         dataset._data.y = dataset._data.y.unsqueeze(-1)
     
 
-
-
-
     elif name in ["ogbn-arxiv"]:
         dataset = PygNodePropPredDataset(name=name, transform=transforms.ToSparseTensor(), root=path)
         evaluator = Evaluator(name=name)
@@ -75,7 +72,7 @@ def get_dataset(name: str, root_dir: str, homophily=None, undirected=False, self
         dataset = DirectedHeterophilousGraphDataset(name=name, transform=transforms.NormalizeFeatures(), root=path)
     elif name == "snap-patents":
         dataset = load_snap_patents_mat(n_classes=5, root=path)
-    elif name == "pokec":
+    elif name == "pokec":  # Ben_wrong
         dataset = load_pokec_mat(n_classes=2, root=path)
     elif name == "arxiv-year":
         # arxiv-year uses the same graph and features as ogbn-arxiv, but with different labels
