@@ -5,7 +5,7 @@ parser = argparse.ArgumentParser("Directed Graph Neural Network")
 parser.add_argument("--seed", type=int, help="manual seed", default=2)
 
 ### Dataset Args
-parser.add_argument("--dataset", type=str, help="Name of dataset", default="arxiv-year")
+parser.add_argument("--dataset", type=str, help="Name of dataset", default="genius")
 parser.add_argument("--dataset_directory", type=str, help="Directory to save datasets", default="dataset")
 parser.add_argument("--checkpoint_directory", type=str, help="Directory to save checkpoints", default="checkpoint")
 
@@ -37,7 +37,7 @@ parser.add_argument("--lr", type=float, help="Learning Rate", default=0.001)
 parser.add_argument("--weight_decay", type=float, help="Weight decay", default=0.0)
 parser.add_argument("--num_epochs", type=int, help="Max number of epochs", default=10000)
 parser.add_argument("--patience", type=int, help="Patience for early stopping", default=10)
-parser.add_argument("--num_runs", type=int, help="Max number of runs", default=10)
+parser.add_argument("--num_runs", type=int, help="Max number of runs", default=1)
 
 ### System Args
 parser.add_argument("--use_best_hyperparams", type=int, default=0, help="whether use parameters in best_hyperparameters.yml")

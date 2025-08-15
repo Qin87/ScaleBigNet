@@ -105,10 +105,8 @@ def get_dataset(name: str, root_dir: str, homophily=None, undirected=False, self
     if transpose:
         dataset._data.edge_index = torch.stack([dataset._data.edge_index[1], dataset._data.edge_index[0]])
 
-    
 
     return dataset, evaluator
-
 
 def get_dataset_split(name, data, root_dir, split_number):
     if name in ["snap-patents", "pokec", "chameleon", "squirrel", "telegram", "directed-roman-empire", "directed-amazon-ratings", "directed-questions"]:
@@ -124,8 +122,6 @@ def get_dataset_split(name, data, root_dir, split_number):
             data["test_mask"][:, split_number],
         )
     
-
-
     elif name in ["penn94",  "genius"]:
         if name == "penn94":
             name = "fb100-Penn94"
