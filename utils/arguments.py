@@ -37,7 +37,7 @@ parser.add_argument("--lr", type=float, help="Learning Rate", default=0.001)
 parser.add_argument("--weight_decay", type=float, help="Weight decay", default=0.0)
 parser.add_argument("--num_epochs", type=int, help="Max number of epochs", default=10000)
 parser.add_argument("--patience", type=int, help="Patience for early stopping", default=10)
-parser.add_argument("--num_runs", type=int, help="Max number of runs", default=1)
+parser.add_argument("--num_runs", type=int, help="Max number of runs", default=10)
 
 ### System Args
 parser.add_argument("--use_best_hyperparams", type=int, default=0, help="whether use parameters in best_hyperparameters.yml")

@@ -11,6 +11,7 @@ print('CWD:', os.getcwd())
 print('sys.path:', sys.path)
 
 import torch
+torch.cuda.set_device(0)
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping

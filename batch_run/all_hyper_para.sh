@@ -6,13 +6,13 @@ Weight_penalties=("exp" "lin" "None")
 Dropouts=(0.0 0.5)
 Hidden_dims=(32  )
 Num_layers=(1 2 3 4 5 6 7 8)
-Learning_rates=(0.005 0.001 0.0005)  # 0.1 0.05 0.01
+Learning_rates=(0.0005)  # 0.1 0.05 0.01  0.005 0.001
 Exponents=(-0.25 -0.5 -0.125)
 JK_values=("max" "cat" "None")
-Patiences=(10  )
-Alphas=(0 0.5 1 -1)
-betas=(0 0.5 1 -1)
-gammas=(0 0.5 1 -1)
+Patiences=(100  )
+Alphas=(-1)
+betas=(0 0.5 1 )
+gammas=(0)
 Normalize_vals=(1 0)
 
                                     for normalize in "${Normalize_vals[@]}"; do
