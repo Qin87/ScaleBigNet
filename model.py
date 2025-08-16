@@ -38,6 +38,9 @@ class ScaleConv(torch.nn.Module):
         if self.structure != 0:
             self.mlp_struct = Linear(num_node, output_dim)
 
+        if self.cat_A_X  !=0:
+            self.mlp_cat = Linear(2*output_dim, output_dim)
+
         if self.zero_order:
             self.lin_zero = Linear(input_dim, output_dim)
             # self.lin_dst_to_src_zero = Linear(input_dim, output_dim)
