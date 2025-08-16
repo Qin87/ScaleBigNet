@@ -39,8 +39,8 @@ class ScaleConv(torch.nn.Module):
             self.mlp_struct = Linear(num_node, output_dim)
 
         if self.zero_order:
-            self.lin_src_to_dst_zero = Linear(input_dim, output_dim)
-            self.lin_dst_to_src_zero = Linear(input_dim, output_dim)
+            self.lin_zero = Linear(input_dim, output_dim)
+            # self.lin_dst_to_src_zero = Linear(input_dim, output_dim)
 
         # Lins for positive powers:
         self.lins_src_to_dst = torch.nn.ModuleList([
@@ -72,9 +72,9 @@ class ScaleConv(torch.nn.Module):
             y_t = self.adj_t_norm @ x
             sum_src_to_dst = self.lins_src_to_dst[0](y)
             sum_dst_to_src = self.lins_dst_to_src[0](y_t)
-            if self.zero_order:
-                sum_src_to_dst = sum_src_to_dst + self.lin_src_to_dst_zero(x)
-                sum_dst_to_src = sum_dst_to_src + self.lin_dst_to_src_zero(x)
+            # if self.zero_order:
+            #     sum_src_to_dst = sum_src_to_dst + self.lin_src_to_dst_zero(x)
+            #     sum_dst_to_src = sum_dst_to_src + self.lin_dst_to_src_zero(x)
 
             totalB = 0
             totalC = 0
@@ -122,11 +122,16 @@ class ScaleConv(torch.nn.Module):
             gnn_total = totalA + totalB + totalC
             if self.structure != 0:
                 struct_value = self.adj_norm @ self.mlp_struct.weight.T
-                return self.structure* struct_value  + (1- self.structure)* gnn_total
+                total = self.structure* struct_value  + (1- self.structure)* gnn_total
             else:
-                return gnn_total
+                total = gnn_total
         else:
-            return self.adj_norm @ self.mlp_struct.weight.T
+            total = self.adj_norm @ self.mlp_struct.weight.T
+
+        if self.zero_order:
+            total = total + self.lin_zero(x)
+
+        return total
 
 
 class FaberConv(torch.nn.Module):

@@ -106,57 +106,57 @@ def load_snap_patents_mat(n_classes=5, root="dataset/"):
     return dataset
 
 
-def load_pokec_mat(n_classes=2, root="dataset/"):
-    # dataset_drive_url = {"pokec": "1dNs5E7BrWJbgcHeQ_zuy5Ozp2tRCWG0y"}
-    # splits_drive_url = {"pokec": "1ZhpAiyTNc0cE_hhgyiqxnkKREHK7MK-_"}
-
-    # Build dataset folder
-    if not os.path.exists(f"{root}pokec"):
-        os.mkdir(f"{root}pokec")
-
-    # Download the data
-    # if not os.path.exists(f"{root}pokec/pokec.mat"):
-    #     p = dataset_drive_url["pokec"]
-    #     print(f"pokec url: {p}")
-    #     gdown.download(
-    #         id=dataset_drive_url["pokec"],
-    #         output=f"{root}pokec/pokec.mat",
-    #         quiet=False,
-    #     )
-
-    # Get data
-    fulldata = scipy.io.loadmat(f"{root}pokec/pokec.mat")
-    edge_index = torch.tensor(fulldata["edge_index"], dtype=torch.long)
-    node_feat = torch.tensor(fulldata["node_feat"], dtype=torch.float)
-    num_nodes = int(fulldata["num_nodes"])
-    label = torch.tensor(fulldata['label'].flatten(), dtype=torch.long )
-
-    # Download splits
-    # name = "pokec"
-    # if not os.path.exists(f"{root}pokec/{name}-splits.npy"):
-    #     assert name in splits_drive_url.keys()
-    #     gdown.download(
-    #         id=splits_drive_url[name],
-    #         output=f"{root}pokec/{name}-splits.npy",
-    #         quiet=False,
-    #     )
-
-    # Get splits
-    # splits_lst = np.load(f"{root}pokec/{name}-splits.npy", allow_pickle=True)
-    # train_mask, val_mask, test_mask = process_fixed_splits(splits_lst, num_nodes)
-    data = Data(
-        x=node_feat,
-        edge_index=edge_index,
-        y=label,
-        num_nodes=num_nodes,
-        train_mask=train_mask,
-        val_mask=val_mask,
-        test_mask=test_mask,
-    )
-
-    dataset = DummyDataset(data, n_classes)
-
-    return dataset
+# def load_pokec_mat(n_classes=2, root="dataset/"):
+#     # dataset_drive_url = {"pokec": "1dNs5E7BrWJbgcHeQ_zuy5Ozp2tRCWG0y"}
+#     # splits_drive_url = {"pokec": "1ZhpAiyTNc0cE_hhgyiqxnkKREHK7MK-_"}
+#
+#     # Build dataset folder
+#     if not os.path.exists(f"{root}pokec"):
+#         os.mkdir(f"{root}pokec")
+#
+#     # Download the data
+#     # if not os.path.exists(f"{root}pokec/pokec.mat"):
+#     #     p = dataset_drive_url["pokec"]
+#     #     print(f"pokec url: {p}")
+#     #     gdown.download(
+#     #         id=dataset_drive_url["pokec"],
+#     #         output=f"{root}pokec/pokec.mat",
+#     #         quiet=False,
+#     #     )
+#
+#     # Get data
+#     fulldata = scipy.io.loadmat(f"{root}pokec/pokec.mat")
+#     edge_index = torch.tensor(fulldata["edge_index"], dtype=torch.long)
+#     node_feat = torch.tensor(fulldata["node_feat"], dtype=torch.float)
+#     num_nodes = int(fulldata["num_nodes"])
+#     label = torch.tensor(fulldata['label'].flatten(), dtype=torch.long )
+#
+#     # Download splits
+#     # name = "pokec"
+#     # if not os.path.exists(f"{root}pokec/{name}-splits.npy"):
+#     #     assert name in splits_drive_url.keys()
+#     #     gdown.download(
+#     #         id=splits_drive_url[name],
+#     #         output=f"{root}pokec/{name}-splits.npy",
+#     #         quiet=False,
+#     #     )
+#
+#     # Get splits
+#     # splits_lst = np.load(f"{root}pokec/{name}-splits.npy", allow_pickle=True)
+#     # train_mask, val_mask, test_mask = process_fixed_splits(splits_lst, num_nodes)
+#     data = Data(
+#         x=node_feat,
+#         edge_index=edge_index,
+#         y=label,
+#         num_nodes=num_nodes,
+#         train_mask=train_mask,
+#         val_mask=val_mask,
+#         test_mask=test_mask,
+#     )
+#
+#     dataset = DummyDataset(data, n_classes)
+#
+#     return dataset
 
 
 
