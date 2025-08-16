@@ -77,6 +77,14 @@ def get_dataset(name: str, root_dir: str, homophily=None, undirected=False, self
         # dataset = load_pokec_mat(n_classes=2, root=path)  # _wrong
         # dataset = PokecDataset(root=dataset_dir)
         dataset = PokecDataset(root=path+"pokec")
+        # Convert the first element to homogeneous and assign to _data
+        dataset._data = dataset[0].to_homogeneous(
+            node_attrs=['x', 'y', 'train_mask', 'val_mask', 'test_mask']
+        )
+        # data = dataset[0]
+        # dataset = data.to_homogeneous(
+        #     node_attrs=['x', 'y', 'train_mask', 'val_mask', 'test_mask']
+        # )
     elif name == "arxiv-year":
         # arxiv-year uses the same graph and features as ogbn-arxiv, but with different labels
         dataset = PygNodePropPredDataset(name="ogbn-arxiv", transform=transforms.ToSparseTensor(), root=path)
@@ -112,11 +120,17 @@ def get_dataset(name: str, root_dir: str, homophily=None, undirected=False, self
     return dataset, evaluator
 
 def get_dataset_split(name, data, root_dir, split_number):
-    if name in ["snap-patents", "pokec", "chameleon", "squirrel", "telegram", "directed-roman-empire", "directed-amazon-ratings", "directed-questions"]:
+    if name in ["snap-patents", "chameleon", "squirrel", "telegram", "directed-roman-empire", "directed-amazon-ratings", "directed-questions"]:
         return (
             data["train_mask"][:, split_number],
             data["val_mask"][:, split_number],
             data["test_mask"][:, split_number],
+        )
+    elif name in ["pokec", ]:
+        return (
+            data["train_mask"].unsqueeze(1),
+            data["val_mask"].unsqueeze(1),
+            data["test_mask"].unsqueeze(1)
         )
     elif name in ["cornell", "wisconsin", "texas"]:
         return (
