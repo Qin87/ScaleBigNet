@@ -5,14 +5,14 @@ K_values=(2 3)
 Weight_penalties=("None" "exp" "lin")
 Dropouts=(0.0 0.5)
 Hidden_dims=(64 32  )
-Num_layers=(1 2 3 4 5 6 7 8)
+Num_layers=(1 2 )
 Learning_rates=(0.001 0.0005)  # 0.1 0.05 0.01  0.005 0.001
 Exponents=(-0.25 -0.5 -0.125)
 JK_values=("max" "cat" "None")
-Patiences=(100  )
+Patiences=(300  )
 Alphas=(-1)
 betas=(0 0.5 1 )
-gammas=(0)
+gammas=(1 0)
 Normalize_vals=(0)   # 1
 
                                     for normalize in "${Normalize_vals[@]}"; do
