@@ -90,3 +90,22 @@ chameleon:
   k_plus: 2
   exponent: -0.25
   weight_penalty: "None"
+
+
+# 83.24±0.51
+penn94:
+  num_runs: 10  # original split
+  alpha: -1  #
+  beta: 0  #
+  gamma: 0  #
+  lr: 0.005
+  hidden_dim: 64
+  num_layers: 1
+  jk: "max"
+  patience: 100
+  conv_type: "scale"
+  normalize: 0
+  k_plus: 2
+  exponent: -0.25
+  weight_penalty: "None"
+  seed: 2

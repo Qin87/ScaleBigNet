@@ -2,7 +2,7 @@ import argparse
 import logging
 
 parser = argparse.ArgumentParser("Directed Graph Neural Network")
-parser.add_argument("--seed", type=int, help="manual seed", default=2)
+parser.add_argument("--seed", type=int, help="manual seed", default=0)
 
 ### Dataset Args
 parser.add_argument("--dataset", type=str, help="Name of dataset", default="genius")
