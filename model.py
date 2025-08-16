@@ -122,18 +122,19 @@ class ScaleConv(torch.nn.Module):
                 total = self.structure* struct_value  + (1- self.structure)* gnn_total
             else:
                 total = gnn_total
+
+            if self.cat_A_X:
+                struct_value = self.adj_norm @ self.mlp_struct.weight.T
+                concat_feat = torch.cat([struct_value, gnn_total], dim=1)
+                concat_output = self.mlp_cat(concat_feat)
+                total += concat_output
         else:
             total = self.adj_norm @ self.mlp_struct.weight.T
 
         if self.zero_order:
             total = total + self.lin_zero(x)
 
-        if self.cat_A_X:
-            struct_value = self.adj_norm @ self.mlp_struct.weight.T
-            gnn_total = totalA + totalB + totalC
-            concat_feat = torch.cat([struct_value, gnn_total], dim=1)
-            concat_output = self.mlp_cat(concat_feat)
-            total += concat_output
+
 
         return total
 
