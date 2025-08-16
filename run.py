@@ -49,6 +49,14 @@ def run(args):
     )
     data = dataset._data
     data_loader = DataLoader(FullBatchGraphDataset(data), batch_size=1, collate_fn=lambda batch: batch[0])
+    print("nodes:", data.x.shape, "edges:", data.edge_index.shape, )
+    if hasattr(data, "train_mask"):
+        print("train:", data.train_mask.sum().item(),
+              "val:", data.val_mask.sum().item() if hasattr(data, "val_mask") else "N/A",
+              "test:", data.test_mask.sum().item() if hasattr(data, "test_mask") else "N/A")
+    else:
+        print("No split masks available.")
+
 
     start_time = time.time()
     with open(log_directory + log_file_name_with_timestamp, 'w') as log_file:
@@ -56,10 +64,16 @@ def run(args):
         print(f"Machine ID: {socket.gethostname()}-{':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(0, 8 * 6, 8)][::-1])}", file=log_file)
         sys.stdout = log_file
 
+
         val_accs, test_accs = [], []
         for num_run in range(args.num_runs):
             print("\nstart run: ", num_run)
             train_mask, val_mask, test_mask = get_dataset_split(args.dataset, data, args.dataset_directory, num_run)
+            if num_run == 0:
+                print("train:", train_mask.sum().item(),
+                      "val:", val_mask.sum().item(),
+                      "test:", test_mask.sum().item(),
+                      file=sys.__stdout__)
 
             # Get model
             args.num_features, args.num_classes = data.num_features, dataset.num_classes
