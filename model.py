@@ -34,6 +34,7 @@ class ScaleConv(torch.nn.Module):
         self.weight_penalty = weight_penalty
         self.zero_order = zero_order
         self.structure = args.structure
+        self.cat_A_X = args.cat_A_X
 
         if self.structure != 0:
             self.mlp_struct = Linear(num_node, output_dim)

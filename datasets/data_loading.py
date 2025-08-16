@@ -25,7 +25,6 @@ from datasets.telegram import Telegram
 from datasets.data_utils import get_mask
 from utils.third_party import (
     load_snap_patents_mat,
-    load_pokec_mat,
     even_quantile_labels,
 )
 from datasets.synthetic import get_syn_dataset
