@@ -192,7 +192,7 @@ class PokecDataset(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, 'pokec')
+        return osp.join(self.root, 'raw')
 
     @property
     def raw_file_names(self):

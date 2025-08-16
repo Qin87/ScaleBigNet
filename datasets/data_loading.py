@@ -76,7 +76,7 @@ def get_dataset(name: str, root_dir: str, homophily=None, undirected=False, self
     elif name == "pokec":
         # dataset = load_pokec_mat(n_classes=2, root=path)  # _wrong
         # dataset = PokecDataset(root=dataset_dir)
-        dataset = PokecDataset(root=path)
+        dataset = PokecDataset(root=path+"pokec")
     elif name == "arxiv-year":
         # arxiv-year uses the same graph and features as ogbn-arxiv, but with different labels
         dataset = PygNodePropPredDataset(name="ogbn-arxiv", transform=transforms.ToSparseTensor(), root=path)
