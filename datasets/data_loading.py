@@ -29,6 +29,7 @@ from utils.third_party import (
     even_quantile_labels,
 )
 from datasets.synthetic import get_syn_dataset
+from .pokec_dataset import PokecDataset
 
 
 def get_dataset(name: str, root_dir: str, homophily=None, undirected=False, self_loops=False, transpose=False):
@@ -56,7 +57,7 @@ def get_dataset(name: str, root_dir: str, homophily=None, undirected=False, self
     elif name in ["cornell", "wisconsin", "texas"]:
         dataset = WebKB(root=path, name=name, transform=transforms.NormalizeFeatures())
         dataset._data.y = dataset._data.y.unsqueeze(-1)
-    elif name in ["penn94", "reed98", "amherst41", "cornell115", "johnshopkins55", "genius"]:
+    elif name in ["penn94", "reed98", "amherst41", "cornell5", "johnshopkins55", "genius", "wiki"]:
         dataset = LINKXDataset(root=path, name=name, transform=transforms.NormalizeFeatures())
         dataset._data.y = dataset._data.y.unsqueeze(-1)
     
@@ -72,8 +73,10 @@ def get_dataset(name: str, root_dir: str, homophily=None, undirected=False, self
         dataset = DirectedHeterophilousGraphDataset(name=name, transform=transforms.NormalizeFeatures(), root=path)
     elif name == "snap-patents":
         dataset = load_snap_patents_mat(n_classes=5, root=path)
-    elif name == "pokec":  # Ben_wrong
-        dataset = load_pokec_mat(n_classes=2, root=path)
+    elif name == "pokec":
+        # dataset = load_pokec_mat(n_classes=2, root=path)  # _wrong
+        # dataset = PokecDataset(root=dataset_dir)
+        dataset = PokecDataset(root=path)
     elif name == "arxiv-year":
         # arxiv-year uses the same graph and features as ogbn-arxiv, but with different labels
         dataset = PygNodePropPredDataset(name="ogbn-arxiv", transform=transforms.ToSparseTensor(), root=path)
