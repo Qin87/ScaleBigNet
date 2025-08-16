@@ -49,6 +49,7 @@ def run(args):
     )
     data = dataset._data
     data_loader = DataLoader(FullBatchGraphDataset(data), batch_size=1, collate_fn=lambda batch: batch[0])
+    num_node = data.x.shape[0]
     print(data)
     print("nodes:", data.x.shape, "edges:", data.edge_index.shape, )
     if hasattr(data, "train_mask"):
@@ -78,7 +79,7 @@ def run(args):
 
             # Get model
             args.num_features, args.num_classes = data.num_features, dataset.num_classes
-            model = get_model(args)
+            model = get_model(args, num_node)
 
             lit_model = LightingFullBatchModelWrapper(
                 model=model,

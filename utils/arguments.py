@@ -5,7 +5,8 @@ parser = argparse.ArgumentParser("Directed Graph Neural Network")
 parser.add_argument("--seed", type=int, help="manual seed", default=0)
 
 ### Dataset Args
-parser.add_argument("--dataset", type=str, help="Name of dataset", default="pokec")
+parser.add_argument("--dataset", type=str, default="penn94",
+                    help="Options: 'pokec', 'penn94', 'chameleon'." )
 parser.add_argument("--dataset_directory", type=str, help="Directory to save datasets", default="dataset")
 parser.add_argument("--checkpoint_directory", type=str, help="Directory to save checkpoints", default="checkpoint")
 
@@ -19,6 +20,7 @@ parser.add_argument("--model", type=str, help="Model type", default="gnn")
 parser.add_argument("--hidden_dim", type=int, help="Hidden dimension of model", default=64)
 parser.add_argument("--num_layers", type=int, help="Number of GNN layers", default=5)
 parser.add_argument("--dropout", type=float, help="Feature dropout", default=0.0)
+parser.add_argument("--structure", type=float, default=0.5, help="1 pure structure, 0 pure feature, 0.5 structure is feature too")
 parser.add_argument("--alpha", type=float, help="Direction convex combination params: A, At", default=1)
 parser.add_argument("--beta", type=float, help="Direction convex combination params: AAt, AtA", default=-1)
 parser.add_argument("--gamma", type=float, help="Direction convex combination params: AA, AtAt", default=-1)
@@ -27,7 +29,7 @@ parser.add_argument("--conv_type", type=str, help="Selects Convolutional Layer",
 parser.add_argument("--normalize", type=int, default=0)
 parser.add_argument("--jk", type=str, choices=["max", "cat", "None"], default="max")
 parser.add_argument("--weight_penalty", type=str, choices=["exp", "lin", "None"], default="None")
-parser.add_argument("--k_plus", type=int, help="Polynomial order", default=1)
+parser.add_argument("--k_plus", type=int, help="Polynomial order", default=2)
 parser.add_argument("--exponent", type=float, help="exponent in norm", default= -0.25)
 parser.add_argument("--lrelu_slope", type=float, help="negative slope of Leaky Relu", default= -1.0)
 parser.add_argument("--zero_order", type=bool, help="If zero order", default= False)

@@ -10,13 +10,13 @@ from torch_geometric.nn import (GCNConv,
 from datasets.data_utils import get_norm_adj
 
 
-def get_conv(conv_type, input_dim, output_dim, args, K_plus = 3, K_minus = 1, zero_order = False, exponent = -0.5, weight_penalty = 'exp'):
+def get_conv(conv_type, input_dim, output_dim, args, num_node,  K_plus = 3, K_minus = 1, zero_order = False, exponent = -0.5, weight_penalty = 'exp'):
     if conv_type == "gcn":
         return GCNConv(input_dim, output_dim, add_self_loops=False)
     elif conv_type == "fabernet":
         return FaberConv(input_dim, output_dim, alpha=args.alpha, K_plus = K_plus, exponent = exponent, weight_penalty = weight_penalty, zero_order = zero_order)
     elif conv_type == "scale":
-        return ScaleConv(input_dim, output_dim, args, K_plus = K_plus, exponent = exponent, weight_penalty = weight_penalty, zero_order = zero_order)
+        return ScaleConv(input_dim, output_dim, args, num_node, K_plus = K_plus, exponent = exponent, weight_penalty = weight_penalty, zero_order = zero_order)
     else:
         raise ValueError(f"Convolution type {conv_type} not supported")
 
@@ -25,7 +25,7 @@ class ScaleConv(torch.nn.Module):
     '''
     multi-scale
     '''
-    def __init__(self, input_dim, output_dim, args, K_plus=1, exponent=-0.25, weight_penalty='exp', zero_order=False):
+    def __init__(self, input_dim, output_dim, args, num_node, K_plus=1, exponent=-0.25, weight_penalty='exp', zero_order=False):
         super().__init__()
         self.input_dim = input_dim
         self.output_dim = output_dim
@@ -33,6 +33,10 @@ class ScaleConv(torch.nn.Module):
         self.exponent = exponent
         self.weight_penalty = weight_penalty
         self.zero_order = zero_order
+        self.structure = args.structure
+
+        if self.structure != 0:
+            self.mlp_struct = Linear(num_node, output_dim)
 
         if self.zero_order:
             self.lin_src_to_dst_zero = Linear(input_dim, output_dim)
@@ -63,60 +67,66 @@ class ScaleConv(torch.nn.Module):
             adj_t = SparseTensor(row=col, col=row, sparse_sizes=(num_nodes, num_nodes))
             self.adj_t_norm = get_norm_adj(adj_t, norm="dir", exponent=self.exponent)
 
-        y = self.adj_norm @ x
-        y_t = self.adj_t_norm @ x
-        sum_src_to_dst = self.lins_src_to_dst[0](y)
-        sum_dst_to_src = self.lins_dst_to_src[0](y_t)
-        if self.zero_order:
-            sum_src_to_dst = sum_src_to_dst + self.lin_src_to_dst_zero(x)
-            sum_dst_to_src = sum_dst_to_src + self.lin_dst_to_src_zero(x)
+        if self.structure != 1:
+            y = self.adj_norm @ x
+            y_t = self.adj_t_norm @ x
+            sum_src_to_dst = self.lins_src_to_dst[0](y)
+            sum_dst_to_src = self.lins_dst_to_src[0](y_t)
+            if self.zero_order:
+                sum_src_to_dst = sum_src_to_dst + self.lin_src_to_dst_zero(x)
+                sum_dst_to_src = sum_dst_to_src + self.lin_dst_to_src_zero(x)
 
-        totalB = 0
-        totalC = 0
-        if self.K_plus > 1:
-            def get_weight(i):
-                if self.weight_penalty == 'exp':
-                    return 1 / (2 ** i)
-                elif self.weight_penalty == 'lin':
-                    return 1 / i
-                elif self.weight_penalty == 'None' or self.weight_penalty is None:
-                    return 1
-                else:
-                    raise ValueError(f"Weight penalty type {self.weight_penalty} not supported")
-            yy = y
-            ytyt = y_t
-            yty = y
-            yyt = y_t
-            for i in range(1, self.K_plus):
-                yy = self.adj_norm @ yy
-                yty = self.adj_t_norm @ yty
+            totalB = 0
+            totalC = 0
+            if self.K_plus > 1:
+                def get_weight(i):
+                    if self.weight_penalty == 'exp':
+                        return 1 / (2 ** i)
+                    elif self.weight_penalty == 'lin':
+                        return 1 / i
+                    elif self.weight_penalty == 'None' or self.weight_penalty is None:
+                        return 1
+                    else:
+                        raise ValueError(f"Weight penalty type {self.weight_penalty} not supported")
+                yy = y
+                ytyt = y_t
+                yty = y
+                yyt = y_t
+                for i in range(1, self.K_plus):
+                    yy = self.adj_norm @ yy
+                    yty = self.adj_t_norm @ yty
 
-                yyt = self.adj_norm @ yyt
-                ytyt = self.adj_t_norm @ ytyt
+                    yyt = self.adj_norm @ yyt
+                    ytyt = self.adj_t_norm @ ytyt
 
-                w = get_weight(i)
+                    w = get_weight(i)
 
-                if self.beta != -1:
-                    b_term = (
-                            self.beta * self.lins_src_to_dst[2 * i - 1](yyt)
-                            + (1 - self.beta) * self.lins_src_to_dst[2 * i - 1](yty)
-                    )
-                    totalB += b_term * w
+                    if self.beta != -1:
+                        b_term = (
+                                self.beta * self.lins_src_to_dst[2 * i - 1](yyt)
+                                + (1 - self.beta) * self.lins_src_to_dst[2 * i - 1](yty)
+                        )
+                        totalB += b_term * w
 
-                if self.gamma != -1:
-                    c_term = (
-                            self.gamma * self.lins_src_to_dst[2 * i](yy)
-                            + (1 - self.gamma) * self.lins_dst_to_src[2 * i](ytyt)
-                    )
-                    totalC += c_term * w
-        if self.alpha == -1:
-            totalA = 0
+                    if self.gamma != -1:
+                        c_term = (
+                                self.gamma * self.lins_src_to_dst[2 * i](yy)
+                                + (1 - self.gamma) * self.lins_dst_to_src[2 * i](ytyt)
+                        )
+                        totalC += c_term * w
+            if self.alpha == -1:
+                totalA = 0
+            else:
+                totalA = self.alpha * sum_src_to_dst + (1 - self.alpha) * sum_dst_to_src
+
+            gnn_total = totalA + totalB + totalC
+            if self.structure != 0:
+                struct_value = self.adj_norm @ self.mlp_struct.weight.T
+                return self.structure* struct_value  + (1- self.structure)* gnn_total
+            else:
+                return gnn_total
         else:
-            totalA = self.alpha * sum_src_to_dst + (1 - self.alpha) * sum_dst_to_src
-
-        total = totalA + totalB + totalC
-
-        return total
+            return self.adj_norm @ self.mlp_struct.weight.T
 
 
 class FaberConv(torch.nn.Module):
@@ -203,6 +213,7 @@ class GNN(torch.nn.Module):
             num_classes,
             hidden_dim,
             args,
+            num_node,
             num_layers=2,
             dropout=0,
             conv_type="fabernet",
@@ -223,12 +234,12 @@ class GNN(torch.nn.Module):
 
         output_dim = hidden_dim if jumping_knowledge else num_classes
         if num_layers == 1:
-            self.convs = ModuleList([get_conv(conv_type, num_features, output_dim, args, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty)])
+            self.convs = ModuleList([get_conv(conv_type, num_features, output_dim, args, num_node, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty)])
         else:
-            self.convs = ModuleList([get_conv(conv_type, num_features, hidden_dim, args, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty)])
+            self.convs = ModuleList([get_conv(conv_type, num_features, hidden_dim, args, num_node, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty)])
             for _ in range(num_layers - 2):
-                self.convs.append(get_conv(conv_type, hidden_dim, hidden_dim, args, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty))
-            self.convs.append(get_conv(conv_type, hidden_dim, output_dim, args, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty))
+                self.convs.append(get_conv(conv_type, hidden_dim, hidden_dim, args, num_node, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty))
+            self.convs.append(get_conv(conv_type, hidden_dim, output_dim, args, num_node, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty))
 
         if jumping_knowledge is not None:
             input_dim = hidden_dim * num_layers if jumping_knowledge == "cat" else hidden_dim
@@ -358,11 +369,12 @@ class LightingFullBatchModelWrapper(pl.LightningModule):
         return optimizer
 
 
-def get_model(args):
+def get_model(args, num_node):
     return GNN(
         num_features=args.num_features,
         hidden_dim=args.hidden_dim,
         args=args,
+        num_node=num_node,
         num_layers=args.num_layers,
         num_classes=args.num_classes,
         dropout=args.dropout,

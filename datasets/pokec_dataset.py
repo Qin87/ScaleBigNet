@@ -273,7 +273,10 @@ class PokecDataset(InMemoryDataset):
         print("Getting user categorical features...")
         user_cat_feats = get_categorical_features(dfn, user_categorical_features)
         print("Getting user text features...")
-        user_text_feats = dfn[self.node_fields[7:-1]].map(lambda x: 1 if isinstance(x, str) and x != '' else 0).values
+        # user_text_feats = dfn[self.node_fields[7:-1]].map(lambda x: 1 if isinstance(x, str) and x != '' else 0).values
+        user_text_feats = dfn[self.node_fields[7:-1]].applymap(
+            lambda x: 1 if isinstance(x, str) and x != '' else 0
+        ).values
         user_text_feats = torch.from_numpy(user_text_feats).float()
         
         data = HeteroData()
