@@ -128,9 +128,9 @@ def get_dataset_split(name, data, root_dir, split_number):
         )
     elif name in ["pokec", ]:
         return (
-            data["train_mask"].unsqueeze(1),
-            data["val_mask"].unsqueeze(1),
-            data["test_mask"].unsqueeze(1)
+            data["train_mask"],
+            data["val_mask"],
+            data["test_mask"]
         )
     elif name in ["cornell", "wisconsin", "texas"]:
         return (

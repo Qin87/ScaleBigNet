@@ -32,6 +32,9 @@ def get_available_accelerator():
 def log_file(net_to_print, dataset_to_print, args):
     log_file_name = dataset_to_print+'_'+args.conv_type+'_'+net_to_print
 
+    log_file_name += '_struct'+str(args.structure)
+    log_file_name += '_zero'+str(args.zero_order)
+
     if args.self_loops:
         log_file_name += '_Sloop'
     if args.undirected:
