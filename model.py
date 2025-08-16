@@ -67,14 +67,11 @@ class ScaleConv(torch.nn.Module):
             adj_t = SparseTensor(row=col, col=row, sparse_sizes=(num_nodes, num_nodes))
             self.adj_t_norm = get_norm_adj(adj_t, norm="dir", exponent=self.exponent)
 
-        if self.structure != 1:
+        if self.structure != 1 or self.cat_A_X:
             y = self.adj_norm @ x
             y_t = self.adj_t_norm @ x
             sum_src_to_dst = self.lins_src_to_dst[0](y)
             sum_dst_to_src = self.lins_dst_to_src[0](y_t)
-            # if self.zero_order:
-            #     sum_src_to_dst = sum_src_to_dst + self.lin_src_to_dst_zero(x)
-            #     sum_dst_to_src = sum_dst_to_src + self.lin_dst_to_src_zero(x)
 
             totalB = 0
             totalC = 0
@@ -130,6 +127,13 @@ class ScaleConv(torch.nn.Module):
 
         if self.zero_order:
             total = total + self.lin_zero(x)
+
+        if self.cat_A_X:
+            struct_value = self.adj_norm @ self.mlp_struct.weight.T
+            gnn_total = totalA + totalB + totalC
+            concat_feat = torch.cat([struct_value, gnn_total], dim=1)
+            concat_output = self.mlp_cat(concat_feat)
+            total += concat_output
 
         return total
 
