@@ -32,7 +32,7 @@ parser.add_argument("--weight_penalty", type=str, choices=["exp", "lin", "None"]
 parser.add_argument("--k_plus", type=int, help="Polynomial order", default=2)
 parser.add_argument("--exponent", type=float, help="exponent in norm", default= -0.25)
 parser.add_argument("--lrelu_slope", type=float, help="negative slope of Leaky Relu", default= -1.0)
-parser.add_argument("--zero_order", type=bool, help="If zero order", default= False)
+parser.add_argument("--zero_order", type=int, help="If zero order", default= 0)
 
 ### Training Args
 parser.add_argument("--lr", type=float, help="Learning Rate", default=0.001)
