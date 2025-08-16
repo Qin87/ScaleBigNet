@@ -30,7 +30,7 @@ for Didataset in "${Direct_dataset[@]}"; do
                 for hidden in "${Hidden_dims[@]}"; do
                     for layers in "${Num_layers[@]}"; do
                                 echo "Running: dataset=$Didataset, k_plus=$k, weight_penalty=$penalty, dropout=$dropout, hidden_dim=$hidden, num_layers=$layers, lr=$lr, exponent=$exp"
-                                python3 run.py --self_loops \
+                                python3 run.py --self_loops  --cat_A_X=1 --structure=0.5  --zero_order=1 \
                                     --dataset="$Didataset" \
                                     --k_plus="$k" \
                                     --weight_penalty="$penalty" \
