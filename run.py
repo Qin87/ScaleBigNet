@@ -49,6 +49,7 @@ def run(args):
     )
     data = dataset._data
     data_loader = DataLoader(FullBatchGraphDataset(data), batch_size=1, collate_fn=lambda batch: batch[0])
+    print(data)
     print("nodes:", data.x.shape, "edges:", data.edge_index.shape, )
     if hasattr(data, "train_mask"):
         print("train:", data.train_mask.sum().item(),
