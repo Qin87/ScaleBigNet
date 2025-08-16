@@ -27,7 +27,7 @@ parser.add_argument("--conv_type", type=str, help="Selects Convolutional Layer",
 parser.add_argument("--normalize", type=int, default=0)
 parser.add_argument("--jk", type=str, choices=["max", "cat", "None"], default="max")
 parser.add_argument("--weight_penalty", type=str, choices=["exp", "lin", "None"], default="None")
-parser.add_argument("--k_plus", type=int, help="Polynomial order", default=2)
+parser.add_argument("--k_plus", type=int, help="Polynomial order", default=1)
 parser.add_argument("--exponent", type=float, help="exponent in norm", default= -0.25)
 parser.add_argument("--lrelu_slope", type=float, help="negative slope of Leaky Relu", default= -1.0)
 parser.add_argument("--zero_order", type=bool, help="If zero order", default= False)
