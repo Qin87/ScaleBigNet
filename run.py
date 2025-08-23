@@ -11,7 +11,7 @@ print('CWD:', os.getcwd())
 print('sys.path:', sys.path)
 
 import torch
-torch.cuda.set_device(0)
+# torch.cuda.set_device(0)
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
@@ -78,8 +78,11 @@ def run(args):
                       file=sys.__stdout__)
 
             # Get model
-            args.num_features, args.num_classes = data.num_features, dataset.num_classes
-            model = get_model(args, num_node)
+            args.num_features, args.num_classes, args.edge_index, args.num_nodes = data.num_features, dataset.num_classes, data.edge_index, num_node
+            model = get_model(args)
+            print(model)
+            # model.reset_parameters()   # _BB
+
 
             lit_model = LightingFullBatchModelWrapper(
                 model=model,
@@ -92,12 +95,13 @@ def run(args):
             )
 
             # Setup Pytorch Lighting Callbacks
-            early_stopping_callback = EarlyStopping(monitor="val_acc", mode="max", patience=args.patience)
+            monitor_metric = args.monitor  # "val_loss"   "val_acc"   "train_loss"
+            early_stopping_callback = EarlyStopping(monitor=monitor_metric, mode="max", patience=args.patience)
             model_summary_callback = ModelSummary(max_depth=-1)
             if not os.path.exists(f"{args.checkpoint_directory}/"):
                 os.mkdir(f"{args.checkpoint_directory}/")
             model_checkpoint_callback = ModelCheckpoint(
-                monitor="val_acc",
+                monitor=monitor_metric,
                 mode="max",
                 dirpath=f"{args.checkpoint_directory}/{str(uuid.uuid4())}/",
             )
@@ -117,15 +121,21 @@ def run(args):
                 accelerator=get_available_accelerator(),
                 devices=[args.gpu_idx],
             )
-
+            print(lit_model)
             # Fit the model
             trainer.fit(model=lit_model, train_dataloaders=data_loader)
+            # trainer.fit(
+            #     model=lit_model,
+            #     train_dataloaders=data_loader,
+            #     val_dataloaders=data_loader
+            # )
 
             # Compute validation and test accuracy
             val_acc = model_checkpoint_callback.best_model_score.item()
             test_acc = trainer.test(ckpt_path="best", dataloaders=data_loader)[0]["test_acc"]
             test_accs.append(test_acc)
             val_accs.append(val_acc)
+            print(f"Test Acc: {test_acc* 100:.2f}", file=sys.__stdout__)
 
             del model
             del lit_model
@@ -139,6 +149,7 @@ def run(args):
             print('Used time: ', time.time() - start_time)
 
         print(f"Test Acc: {np.mean(test_accs) *100:.2f}±{np.std(test_accs) * 100:.2f}")
+        print(f"Test Acc: {np.mean(test_accs) *100:.2f}±{np.std(test_accs) * 100:.2f}", file=sys.__stdout__)
 
 
 if __name__ == "__main__":

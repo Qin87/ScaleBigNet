@@ -8,36 +8,37 @@ from torch_geometric.nn import (GCNConv,
     JumpingKnowledge)
 
 from datasets.data_utils import get_norm_adj
+from link_model import LINKX, LINK_Concat, H2GCN, LINK
 
 
-def get_conv(conv_type, input_dim, output_dim, args, num_node,  K_plus = 3, K_minus = 1, zero_order = False, exponent = -0.5, weight_penalty = 'exp'):
-    if conv_type == "gcn":
-        return GCNConv(input_dim, output_dim, add_self_loops=False)
-    elif conv_type == "fabernet":
-        return FaberConv(input_dim, output_dim, alpha=args.alpha, K_plus = K_plus, exponent = exponent, weight_penalty = weight_penalty, zero_order = zero_order)
-    elif conv_type == "scale":
-        return ScaleConv(input_dim, output_dim, args, num_node, K_plus = K_plus, exponent = exponent, weight_penalty = weight_penalty, zero_order = zero_order)
+def get_conv(input_dim, output_dim, args):
+    if args.conv_type == "gcn":
+        return GCNConv(input_dim, output_dim, add_self_loops=args.self_loops)
+    elif args.conv_type == "fabernet":
+        return FaberConv(input_dim, output_dim, args)
+    elif args.conv_type == "scale":
+        return ScaleConv(input_dim, output_dim, args)
     else:
-        raise ValueError(f"Convolution type {conv_type} not supported")
+        raise ValueError(f"Convolution type {args.conv_type} not supported")
 
 
 class ScaleConv(torch.nn.Module):
     '''
     multi-scale
     '''
-    def __init__(self, input_dim, output_dim, args, num_node, K_plus=1, exponent=-0.25, weight_penalty='exp', zero_order=False):
+    def __init__(self, input_dim, output_dim, args):
         super().__init__()
         self.input_dim = input_dim
         self.output_dim = output_dim
-        self.K_plus = K_plus
-        self.exponent = exponent
-        self.weight_penalty = weight_penalty
-        self.zero_order = zero_order
+        self.k_plus = args.k_plus
+        self.exponent = args.exponent
+        self.weight_penalty = args.weight_penalty
+        self.zero_order = args.zero_order
         self.structure = args.structure
         self.cat_A_X = args.cat_A_X
 
         if self.structure != 0:
-            self.mlp_struct = Linear(num_node, output_dim)
+            self.mlp_struct = Linear(args.num_node, output_dim)
 
         if self.cat_A_X  !=0:
             self.mlp_cat = Linear(2*output_dim, output_dim)
@@ -48,11 +49,11 @@ class ScaleConv(torch.nn.Module):
 
         # Lins for positive powers:
         self.lins_src_to_dst = torch.nn.ModuleList([
-            Linear(input_dim, output_dim) for _ in range(2*K_plus)
+            Linear(input_dim, output_dim) for _ in range(2* args.k_plus)
         ])
 
         self.lins_dst_to_src = torch.nn.ModuleList([
-            Linear(input_dim, output_dim) for _ in range(2*K_plus)
+            Linear(input_dim, output_dim) for _ in range(2*args.k_plus)
         ])
 
         self.alpha = args.alpha
@@ -79,7 +80,7 @@ class ScaleConv(torch.nn.Module):
 
             totalB = 0
             totalC = 0
-            if self.K_plus > 1:
+            if self.k_plus > 1:
                 def get_weight(i):
                     if self.weight_penalty == 'exp':
                         return 1 / (2 ** i)
@@ -93,7 +94,7 @@ class ScaleConv(torch.nn.Module):
                 ytyt = y_t
                 yty = y
                 yyt = y_t
-                for i in range(1, self.K_plus):
+                for i in range(1, self.k_plus):
                     yy = self.adj_norm @ yy
                     yty = self.adj_t_norm @ yty
 
@@ -138,35 +139,33 @@ class ScaleConv(torch.nn.Module):
         if self.zero_order:
             total = total + self.lin_zero(x)
 
-
-
         return total
 
 
 class FaberConv(torch.nn.Module):
-    def __init__(self, input_dim, output_dim, alpha, K_plus=1, exponent = -0.25, weight_penalty = 'exp', zero_order = False):
-        super(FaberConv, self).__init__()
+    def __init__(self, input_dim, output_dim, args):
+        super().__init__()
 
         self.input_dim = input_dim
         self.output_dim = output_dim
-        self.K_plus = K_plus
-        self.exponent = exponent
-        self.weight_penalty = weight_penalty
-        self.zero_order = zero_order
+        self.k_plus = args.k_plus
+        self.exponent = args.exponent
+        self.weight_penalty = args.weight_penalty
+        self.zero_order = args.zero_order
 
         if self.zero_order:
             self.lin_src_to_dst_zero = Linear(input_dim, output_dim)
             self.lin_dst_to_src_zero = Linear(input_dim, output_dim)
 
         self.lins_src_to_dst = torch.nn.ModuleList([
-            Linear(input_dim, output_dim) for _ in range(K_plus)
+            Linear(input_dim, output_dim) for _ in range(args.k_plus)
         ])
 
         self.lins_dst_to_src = torch.nn.ModuleList([
-            Linear(input_dim, output_dim) for _ in range(K_plus)
+            Linear(input_dim, output_dim) for _ in range(args.k_plus)
         ])
 
-        self.alpha = alpha
+        self.alpha = args.alpha
         self.adj_norm, self.adj_t_norm = None, None
 
     def forward(self, x, edge_index):
@@ -188,9 +187,9 @@ class FaberConv(torch.nn.Module):
             sum_src_to_dst =  sum_src_to_dst + self.lin_src_to_dst_zero(x)
             sum_dst_to_src =  sum_dst_to_src + self.lin_dst_to_src_zero(x)
 
-        if self.K_plus > 1:
+        if self.k_plus > 1:
             if self.weight_penalty == 'exp':
-                for i in range(1,self.K_plus):
+                for i in range(1,self.k_plus):
                     y   = self.adj_norm   @ y
                     y_t = self.adj_t_norm @ y
 
@@ -198,14 +197,14 @@ class FaberConv(torch.nn.Module):
                     sum_dst_to_src = sum_dst_to_src + self.lins_dst_to_src[i](y_t)/(2**i)
 
             elif self.weight_penalty == 'lin':
-                for i in range(1,self.K_plus):
+                for i in range(1,self.k_plus):
                     y   = self.adj_norm   @ y
                     y_t = self.adj_t_norm @ y
 
                     sum_src_to_dst = sum_src_to_dst + self.lins_src_to_dst[i](y)/i
                     sum_dst_to_src = sum_dst_to_src + self.lins_dst_to_src[i](y_t)/i
             elif self.weight_penalty == None:
-                for i in range(1,self.K_plus):
+                for i in range(1,self.k_plus):
                     y   = self.adj_norm   @ y
                     y_t = self.adj_t_norm @ y
 
@@ -216,97 +215,50 @@ class FaberConv(torch.nn.Module):
        
         total = self.alpha * sum_src_to_dst + (1 - self.alpha) * sum_dst_to_src
 
-
         return total
 
 
 class GNN(torch.nn.Module):
-    def __init__(
-            self,
-            num_features,
-            num_classes,
-            hidden_dim,
-            args,
-            num_node,
-            num_layers=2,
-            dropout=0,
-            conv_type="fabernet",
-            jumping_knowledge=False,
-            normalize=False,
+    def __init__(self, args):
+        super().__init__()
+        self.conv_type = args.conv_type
+        self.alpha = nn.Parameter(torch.ones(1) * args.alpha, requires_grad=args.learn_alpha)
+        self.lrelu_slope = args.lrelu_slope
 
-            learn_alpha=False,
-            K_plus=3,
-            exponent=-0.25,
-            weight_penalty='exp',
-            lrelu_slope=-1.0,
-            zero_order=False,
-    ):
-        super(GNN, self).__init__()
-        self.conv_type = conv_type
-        self.alpha = nn.Parameter(torch.ones(1) * args.alpha, requires_grad=learn_alpha)
-        self.lrelu_slope = lrelu_slope
-
-        output_dim = hidden_dim if jumping_knowledge else num_classes
-        if num_layers == 1:
-            self.convs = ModuleList([get_conv(conv_type, num_features, output_dim, args, num_node, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty)])
+        output_dim = args.hidden_dim if args.jk else args.num_classes
+        if args.num_layers == 1:
+            self.convs = ModuleList([get_conv(args.num_features, output_dim, args)])
         else:
-            self.convs = ModuleList([get_conv(conv_type, num_features, hidden_dim, args, num_node, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty)])
-            for _ in range(num_layers - 2):
-                self.convs.append(get_conv(conv_type, hidden_dim, hidden_dim, args, num_node, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty))
-            self.convs.append(get_conv(conv_type, hidden_dim, output_dim, args, num_node, K_plus=K_plus, zero_order=zero_order, exponent=exponent, weight_penalty=weight_penalty))
+            self.convs = ModuleList([get_conv(args.num_features, args.hidden_dim, args)])
+            for _ in range(args.num_layers - 2):
+                self.convs.append(get_conv(args.hidden_dim, args.hidden_dim, args))
+            self.convs.append(get_conv(args.hidden_dim, output_dim, args))
 
-        if jumping_knowledge is not None:
-            input_dim = hidden_dim * num_layers if jumping_knowledge == "cat" else hidden_dim
-            self.lin = Linear(input_dim, num_classes)
-            self.jump = JumpingKnowledge(mode=jumping_knowledge, channels=hidden_dim, num_layers=num_layers)
+        if args.jk is not None:
+            input_dim = args.hidden_dim * args.num_layers if args.jk == "cat" else args.hidden_dim
+            self.lin = Linear(input_dim, args.num_classes)
+            self.jump = JumpingKnowledge(mode=args.jk, channels=args.hidden_dim, num_layers=args.num_layers)
 
-        self.num_layers = num_layers
-        self.dropout = dropout
-        self.jumping_knowledge = jumping_knowledge
-        self.normalize = normalize
+        self.num_layers = args.num_layers
+        self.dropout = args.dropout
+        self.jk = args.jk
+        self.normalize = args.normalize
     def forward(self, x, edge_index):
-        if self.conv_type == "complex-fabernet":
-            x_real =  x
+        xs = []
+        for i, conv in enumerate(self.convs):
+            x = conv(x, edge_index)
+            if i != len(self.convs) - 1 or self.jk:
+                x = F.leaky_relu(x,negative_slope= self.lrelu_slope)
+                x = F.dropout(x, p=self.dropout, training=self.training)
+                if self.normalize:
+                    x = F.normalize(x, p=2, dim=1)
+            xs += [x]
 
-            x_imag = torch.zeros_like(x)
+        if self.jk is not None:
+            x = self.jump(xs)
+            x = self.lin(x)
 
-            xs = []
-            for i, conv in enumerate(self.convs):
-                x_real, x_imag = conv(x_real, x_imag, edge_index)
-                if i != len(self.convs) - 1 or self.jumping_knowledge:
-                    x_real = F.leaky_relu(x_real,negative_slope= self.lrelu_slope)
-                    x_imag = F.leaky_relu(x_imag,negative_slope= self.lrelu_slope)
-
-                    x_real = F.dropout(x_real, p=self.dropout, training=self.training)
-                    x_imag = F.dropout(x_imag, p=self.dropout, training=self.training)
-                    if self.normalize: 
-                        x_real = F.normalize(x_real, p=2, dim=1)
-                        x_imag = F.normalize(x_imag, p=2, dim=1)
-
-                xs += [torch.cat((x_real,x_imag),1)]
-            x = torch.cat((x_real,x_imag),1)
-
-            if self.jumping_knowledge is not None:
-                x = self.jump(xs)
-                x = self.lin(x)
-
-            return torch.nn.functional.log_softmax(x, dim=1)
-        else:
-            xs = []
-            for i, conv in enumerate(self.convs):
-                x = conv(x, edge_index)
-                if i != len(self.convs) - 1 or self.jumping_knowledge:
-                    x = F.leaky_relu(x,negative_slope= self.lrelu_slope)
-                    x = F.dropout(x, p=self.dropout, training=self.training)
-                    if self.normalize:
-                        x = F.normalize(x, p=2, dim=1)
-                xs += [x]
-
-            if self.jumping_knowledge is not None:
-                x = self.jump(xs)
-                x = self.lin(x)
-
-            return torch.nn.functional.log_softmax(x, dim=1)
+        return torch.nn.functional.log_softmax(x, dim=1)
 
 
 
@@ -335,23 +287,52 @@ class LightingFullBatchModelWrapper(pl.LightningModule):
         x, y, edge_index = batch.x, batch.y.long(), batch.edge_index
         out = self.model(x, edge_index)
 
-        loss = nn.functional.nll_loss(out[self.train_mask], y[self.train_mask].squeeze())
-        self.log("train_loss", loss)
-
+        # Training loss and accuracy
+        train_loss = nn.functional.nll_loss(out[self.train_mask], y[self.train_mask].squeeze())
         y_pred = out.max(1)[1]
         train_acc = self.evaluate(y_pred=y_pred[self.train_mask], y_true=y[self.train_mask])
-        self.log("train_acc", train_acc)
-        val_acc = self.evaluate(y_pred=y_pred[self.val_mask], y_true=y[self.val_mask])
-        self.log("val_acc", val_acc)
 
-        return loss
+        self.log("train_loss", train_loss, prog_bar=True)
+        self.log("train_acc", train_acc, prog_bar=True)
+
+        return train_loss
+
+    def validation_step(self, batch, batch_idx):
+        x, y, edge_index = batch.x, batch.y.long(), batch.edge_index
+        out = self.model(x, edge_index)
+
+        # Validation loss and accuracy
+        val_loss = nn.functional.nll_loss(out[self.val_mask], y[self.val_mask].squeeze())
+        y_pred = out.max(1)[1]
+        val_acc = self.evaluate(y_pred=y_pred[self.val_mask], y_true=y[self.val_mask])
+
+        self.log("val_loss", val_loss, prog_bar=True)
+        self.log("val_acc", val_acc, prog_bar=True)
+
+        return val_loss
+    # def training_step(self, batch, batch_idx):
+    #     x, y, edge_index = batch.x, batch.y.long(), batch.edge_index
+    #     out = self.model(x, edge_index)
+    #
+    #     loss = nn.functional.nll_loss(out[self.train_mask], y[self.train_mask].squeeze())
+    #     self.log("train_loss", train_loss)
+    #
+    #     loss = nn.functional.nll_loss(out[self.val_mask], y[self.val_mask].squeeze())
+    #     self.log("val_loss", val_loss)
+    #
+    #     y_pred = out.max(1)[1]
+    #     train_acc = self.evaluate(y_pred=y_pred[self.train_mask], y_true=y[self.train_mask])
+    #     self.log("train_acc", train_acc)
+    #     val_acc = self.evaluate(y_pred=y_pred[self.val_mask], y_true=y[self.val_mask])
+    #     self.log("val_acc", val_acc)
+    #
+    #     return loss
 
     def evaluate(self, y_pred, y_true):
         if self.evaluator:
             acc = self.evaluator.eval({"y_true": y_true, "y_pred": y_pred.unsqueeze(1)})["acc"]
         else:
             acc = y_pred.eq(y_true.squeeze()).sum().item() / y_pred.shape[0]
-
         return acc
 
     def test_step(self, batch, batch_idx):
@@ -359,14 +340,11 @@ class LightingFullBatchModelWrapper(pl.LightningModule):
         out = self.model(x, edge_index)
 
         y_pred = out.max(1)[1]
-        val_acc = self.evaluate(y_pred=y_pred[self.test_mask], y_true=y[self.test_mask])
-        self.log("test_acc", val_acc)
+        test_acc = self.evaluate(y_pred=y_pred[self.test_mask], y_true=y[self.test_mask])
+        self.log("test_acc", test_acc, prog_bar=True)
 
     def configure_optimizers(self):
-
-        imag_weights = list()
-        real_weights = list()
-        other_params = list()
+        other_params, imag_weights, real_weights = [], [], []
 
         for name, param in self.model.named_parameters():
             if "imag" in name:
@@ -379,27 +357,18 @@ class LightingFullBatchModelWrapper(pl.LightningModule):
                 other_params.append(param)
 
         optimizer = optim.AdamW([{'params': other_params, 'weight_decay': self.weight_decay}], lr = self.lr)
-        
+        print(optimizer)
         return optimizer
 
 
-def get_model(args, num_node):
-    return GNN(
-        num_features=args.num_features,
-        hidden_dim=args.hidden_dim,
-        args=args,
-        num_node=num_node,
-        num_layers=args.num_layers,
-        num_classes=args.num_classes,
-        dropout=args.dropout,
-        conv_type=args.conv_type,
-        jumping_knowledge=args.jk,
-        normalize=args.normalize,
-
-        learn_alpha=args.learn_alpha,
-        K_plus = args.k_plus,
-        zero_order = args.zero_order,
-        exponent = args.exponent,
-        weight_penalty = args.weight_penalty,
-        lrelu_slope= args.lrelu_slope,
-    )
+def get_model(args):
+    if args.model == 'h2gcn':
+        return H2GCN(args)
+    elif args.model == 'link_concat':
+        return LINK_Concat(args)
+    elif args.model == 'linkx':
+        return LINKX(args)
+    elif args.model == 'link':
+        return LINK(args)
+    else:
+        return GNN(args=args)

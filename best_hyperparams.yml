@@ -94,7 +94,7 @@ chameleon:
 
 # 83.24±0.51
 penn94:
-  num_runs: 10  # original split
+  num_runs: 5  # original split
   alpha: -1  #
   beta: 0  #
   gamma: 0  #

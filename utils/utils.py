@@ -34,7 +34,7 @@ def log_file(net_to_print, dataset_to_print, args):
 
     log_file_name += '_struct'+str(args.structure)
     log_file_name += '_zero'+str(args.zero_order)
-    log_file_name += 'cat'+str(args.cat_A_X)
+    log_file_name += '_cat'+str(args.cat_A_X)
 
     if args.self_loops:
         log_file_name += '_Sloop'
