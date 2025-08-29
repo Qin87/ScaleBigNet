@@ -34,11 +34,6 @@ def col_norm(adj):
     return matrix
 
 
-
-
-
-
-
 def directed_norm(adj, exponent):
     """
     Applies the normalization for directed graphs:
@@ -58,10 +53,6 @@ def directed_norm(adj, exponent):
     
     return adj
 
-
-
-
-
 def directed_norm_ones(adj):
     """
     Applies the normalization for directed graphs:
@@ -80,9 +71,6 @@ def directed_norm_ones(adj):
 
     
     return adj
-
-
-
 
 
 def no_norm(adj):
@@ -111,13 +99,6 @@ def norm_laplacian(adj):
     
     return adj.add(identity_matrix)
     
-
-
-
-
-
-
-
 
 def directed_opposite_norm(adj):
     """

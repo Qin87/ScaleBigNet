@@ -46,7 +46,7 @@ def log_file(net_to_print, dataset_to_print, args):
     if args.conv_type == 'scale' and args.k_plus > 1:
         log_file_name += '_a'+str(args.alpha)+'_b'+str(args.beta)+'_c'+str(args.gamma)
     log_file_name += '_k'+ str(args.k_plus)+'_lay'+str(args.num_layers)+'_lr'+str(
-        args.lr)+'_split'+str(args.num_runs)+'_hid'+str(args.hidden_dim)+'_'+str(args.weight_penalty)+'_dp'+str(
+        args.lr)+'_split'+str(args.num_runs)+'_hid'+str(args.hid_dim)+'_'+str(args.weight_penalty)+'_dp'+str(
         args.dropout)+'_n'+str(
         args.normalize)+'_P'+str(args.patience)+'_jk'+args.jk+str(args.exponent)+'_s'+str(args.seed)
 

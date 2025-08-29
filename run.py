@@ -81,7 +81,6 @@ def run(args):
             args.num_features, args.num_classes, args.edge_index, args.num_nodes = data.num_features, dataset.num_classes, data.edge_index, num_node
             model = get_model(args)
             print(model)
-            # model.reset_parameters()   # _BB
 
 
             lit_model = LightingFullBatchModelWrapper(
@@ -96,7 +95,14 @@ def run(args):
 
             # Setup Pytorch Lighting Callbacks
             monitor_metric = args.monitor  # "val_loss"   "val_acc"   "train_loss"
-            early_stopping_callback = EarlyStopping(monitor=monitor_metric, mode="max", patience=args.patience)
+            if "loss" in monitor_metric:
+                mode = "min"
+            else:
+                mode = "max"
+
+            early_stopping_callback = EarlyStopping(monitor=monitor_metric,mode=mode,patience=args.patience)
+
+            # early_stopping_callback = EarlyStopping(monitor=monitor_metric, mode="max", patience=args.patience)
             model_summary_callback = ModelSummary(max_depth=-1)
             if not os.path.exists(f"{args.checkpoint_directory}/"):
                 os.mkdir(f"{args.checkpoint_directory}/")

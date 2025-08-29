@@ -5,8 +5,8 @@ parser = argparse.ArgumentParser("Directed Graph Neural Network")
 parser.add_argument("--seed", type=int, help="manual seed", default=0)
 
 ### Dataset Args
-parser.add_argument("--dataset", type=str, default="pokec",
-                    help="Options: 'pokec', 'penn94', 'chameleon'." )
+parser.add_argument("--dataset", type=str, default="chameleon",
+                    help="Options: genius, 'pokec', 'penn94', 'chameleon'." )
 parser.add_argument("--dataset_directory", type=str, help="Directory to save datasets", default="dataset")
 parser.add_argument("--checkpoint_directory", type=str, help="Directory to save checkpoints", default="checkpoint")
 
@@ -16,9 +16,9 @@ parser.add_argument("--self_loops", action="store_true", help="Whether to add se
 parser.add_argument("--transpose", action="store_true", help="Whether to use transpose of the graph")
 
 ### Model Args
-parser.add_argument("--model", type=str, help="gnn for scale, faber, linkx, link", default="link")
-parser.add_argument("--monitor", type=str, help="train_loss, train_acc, val_loss, val_acc, ", default="val_loss")
-parser.add_argument("--hidden_dim", type=int, help="Hidden dimension of model", default=32)
+parser.add_argument("--model", type=str, help="gnn for scale, faber, linkx, link", default="scale")
+parser.add_argument("--monitor", type=str, help="train_loss, train_acc, val_loss, val_acc, ", default="val_acc")
+parser.add_argument("--hid_dim", type=int, help="Hidden dimension of model", default=8)
 parser.add_argument("--num_layers", type=int, help="Number of GNN layers", default=2)
 parser.add_argument("--dropout", type=float, help="Feature dropout", default=0.5)
 parser.add_argument("--alpha", type=float, help="Direction convex combination params: A, At", default=1)
@@ -35,7 +35,7 @@ parser.add_argument("--lrelu_slope", type=float, help="negative slope of Leaky R
 
 parser.add_argument("--zero_order", type=int, help="If include zero order", default=0)
 parser.add_argument("--cat_A_X", type=int, help="If include concatenate A and X", default=0)
-parser.add_argument("--structure", type=float, default=1, help="1 pure structure, 0 pure feature, 0.5 structure is feature too")
+parser.add_argument("--structure", type=float, default=0, help="1 pure structure, 0 pure feature, 0.5 structure is feature too")
 
 
 ### Training Args

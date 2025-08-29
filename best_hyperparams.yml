@@ -5,7 +5,7 @@ arxiv-year:
   gamma: -1
   num_runs: 5  # original split
   lr: 0.005
-  hidden_dim: 256
+  hid_dim: 256
   num_layers: 6
   jk: "cat"
   patience: 200
@@ -23,7 +23,7 @@ snap-patents:
   gamma: 0.5
   num_runs: 5  # original split
   lr: 0.01
-  hidden_dim: 32
+  hid_dim: 32
   num_layers: 3
   jk: "max"
   patience: 400
@@ -43,7 +43,7 @@ directed-roman-empire:
   gamma: -1
   num_runs: 10  # original split
   lr: 0.01
-  hidden_dim: 256
+  hid_dim: 256
   num_layers: 5
   jk: "cat"
   dropout: 0.2
@@ -55,6 +55,7 @@ directed-roman-empire:
   lrelu_slope: 0
   weight_penalty: "None"
   zero_order: True
+  monitor: 'val_acc'
 
 # 76.22±1.76
 squirrel:
@@ -63,7 +64,7 @@ squirrel:
   gamma: -1  #
   num_runs: 10  # original split
   lr: 0.01
-  hidden_dim: 128
+  hid_dim: 128
   num_layers: 4
   jk: "max"
   patience: 400
@@ -81,7 +82,7 @@ chameleon:
   beta: 1  #
   gamma: 1  #
   lr: 0.005
-  hidden_dim: 128
+  hid_dim: 128
   num_layers: 5
   jk: "cat"
   patience: 400
@@ -99,7 +100,7 @@ penn94:
   beta: 0  #
   gamma: 0  #
   lr: 0.005
-  hidden_dim: 64
+  hid_dim: 64
   num_layers: 1
   jk: "max"
   patience: 100

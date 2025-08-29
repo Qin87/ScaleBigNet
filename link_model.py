@@ -15,10 +15,10 @@ class LINKX(nn.Module):
     """
     def __init__(self, args):
         super().__init__()
-        self.mlpA = MLP(args.num_nodes, args.hidden_channels, args.hidden_channels, args.init_layers_A, dropout=args.dropout)
-        self.mlpX = MLP(args.num_features , args.hidden_channels, args.hidden_channels, args.init_layers_X, dropout=args.dropout)
-        self.W = nn.Linear(2 * args.hidden_channels, args.hidden_channels)
-        self.mlp_final = MLP(args.hidden_channels, args.hidden_channels, args.out_channels, args.num_layers, dropout=args.dropout)
+        self.mlpA = MLP(args.num_nodes, args.hid_dim, args.hid_dim, args.init_layers_A, dropout=args.dropout)
+        self.mlpX = MLP(args.num_features , args.hid_dim, args.hid_dim, args.init_layers_X, dropout=args.dropout)
+        self.W = nn.Linear(2 * args.hid_dim, args.hid_dim)
+        self.mlp_final = MLP(args.hid_dim, args.hid_dim, args.out_channels, args.num_layers, dropout=args.dropout)
         self.in_channels = args.num_features
         self.num_nodes = args.num_nodes
         self.A = None
@@ -82,7 +82,7 @@ class LINK_Concat(nn.Module):
 
     def __init__(self, args, cache=True):
         super().__init__()
-        self.mlp = MLP(args.num_features + args.num_nodes, args.hidden_channels, args.num_classes, args.num_layers, dropout=args.dropout)
+        self.mlp = MLP(args.num_features + args.num_nodes, args.hid_dim, args.num_classes, args.num_layers, dropout=args.dropout)
         self.in_channels = args.num_features
         self.cache = cache
         self.x = None
@@ -117,16 +117,17 @@ class LINK_Concat(nn.Module):
 
 class LINK_Add(nn.Module):
     """ add A and X """
-    def __init__(self, in_channels, hidden_channels, out_channels, num_layers, num_nodes, dropout=.5, cache=False, inner_activation=False, inner_dropout=False, init_layers_A=1, init_layers_X=1):
-        super().__init__()
-        self.mlpA = MLP(num_nodes, hidden_channels, hidden_channels, init_layers_A, dropout=0)
-        self.mlpX = MLP(in_channels, hidden_channels, hidden_channels, init_layers_X, dropout=0)
 
-        self.mlp = MLP(in_channels + num_nodes, hidden_channels, out_channels, num_layers, dropout=dropout)
-        self.in_channels = in_channels
+    def __init__(self, args, cache=True):
+        super().__init__()
+        self.mlpA = MLP(args.num_nodes, args.hid_dim, args.hid_dim, args.init_layers_A, dropout=0)
+        self.mlpX = MLP(args.num_features , args.hid_dim, args.hid_dim, args.init_layers_X, dropout=0)
+
+        self.mlp = MLP(args.num_features  + args.num_nodes, args.hid_dim, args.out_channels, args.num_layers, dropout=args.dropout)
+        self.in_channels = args.num_features
         self.cache = cache
         self.x = None
-        self.mlp_final = MLP(hidden_channels, hidden_channels, out_channels, num_layers, dropout=dropout)
+        self.mlp_final = MLP(args.hid_dim, args.hid_dim, args.out_channels, args.num_layers, dropout=args.dropout)
 
         self.reset_parameters()
 
@@ -170,19 +171,19 @@ class H2GCN(nn.Module):
                  use_bn=True, conv_dropout=True):
         super().__init__()
 
-        self.feature_embed = MLP(args.num_features, args.hidden_channels,
-                                 args.hidden_channels, num_layers=num_mlp_layers, dropout=args.dropout)
+        self.feature_embed = MLP(args.num_features, args.hid_dim,
+                                 args.hid_dim, num_layers=num_mlp_layers, dropout=args.dropout)
 
         self.convs = nn.ModuleList()
         self.convs.append(H2GCNConv())
 
         self.bns = nn.ModuleList()
-        self.bns.append(nn.BatchNorm1d(args.hidden_channels * 2 * len(self.convs)))
+        self.bns.append(nn.BatchNorm1d(args.hid_dim * 2 * len(self.convs)))
 
         for l in range(args.num_layers - 1):
             self.convs.append(H2GCNConv())
             if l != args.num_layers - 2:
-                self.bns.append(nn.BatchNorm1d(args.hidden_channels * 2 * len(self.convs)))
+                self.bns.append(nn.BatchNorm1d(args.hid_dim * 2 * len(self.convs)))
 
         self.dropout = args.dropout
         self.activation = F.relu
@@ -190,7 +191,7 @@ class H2GCN(nn.Module):
         self.conv_dropout = conv_dropout  # dropout neighborhood aggregation steps
 
         self.jump = JumpingKnowledge('cat')
-        last_dim = args.hidden_channels * (2 ** (args.num_layers + 1) - 1)
+        last_dim = args.hid_dim * (2 ** (args.num_layers + 1) - 1)
         self.final_project = nn.Linear(last_dim, args.num_classes)
 
         self.num_nodes = args.num_nodes

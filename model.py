@@ -38,7 +38,7 @@ class ScaleConv(torch.nn.Module):
         self.cat_A_X = args.cat_A_X
 
         if self.structure != 0:
-            self.mlp_struct = Linear(args.num_node, output_dim)
+            self.mlp_struct = Linear(args.num_nodes, output_dim)
 
         if self.cat_A_X  !=0:
             self.mlp_cat = Linear(2*output_dim, output_dim)
@@ -133,7 +133,7 @@ class ScaleConv(torch.nn.Module):
                 concat_feat = torch.cat([struct_value, gnn_total], dim=1)
                 concat_output = self.mlp_cat(concat_feat)
                 total += concat_output
-        else:
+        else:  # structure=1 and cat!=1
             total = self.adj_norm @ self.mlp_struct.weight.T
 
         if self.zero_order:
@@ -225,19 +225,19 @@ class GNN(torch.nn.Module):
         self.alpha = nn.Parameter(torch.ones(1) * args.alpha, requires_grad=args.learn_alpha)
         self.lrelu_slope = args.lrelu_slope
 
-        output_dim = args.hidden_dim if args.jk else args.num_classes
+        output_dim = args.hid_dim if args.jk else args.num_classes
         if args.num_layers == 1:
             self.convs = ModuleList([get_conv(args.num_features, output_dim, args)])
         else:
-            self.convs = ModuleList([get_conv(args.num_features, args.hidden_dim, args)])
+            self.convs = ModuleList([get_conv(args.num_features, args.hid_dim, args)])
             for _ in range(args.num_layers - 2):
-                self.convs.append(get_conv(args.hidden_dim, args.hidden_dim, args))
-            self.convs.append(get_conv(args.hidden_dim, output_dim, args))
+                self.convs.append(get_conv(args.hid_dim, args.hid_dim, args))
+            self.convs.append(get_conv(args.hid_dim, output_dim, args))
 
         if args.jk is not None:
-            input_dim = args.hidden_dim * args.num_layers if args.jk == "cat" else args.hidden_dim
+            input_dim = args.hid_dim * args.num_layers if args.jk == "cat" else args.hid_dim
             self.lin = Linear(input_dim, args.num_classes)
-            self.jump = JumpingKnowledge(mode=args.jk, channels=args.hidden_dim, num_layers=args.num_layers)
+            self.jump = JumpingKnowledge(mode=args.jk, channels=args.hid_dim, num_layers=args.num_layers)
 
         self.num_layers = args.num_layers
         self.dropout = args.dropout
@@ -261,19 +261,6 @@ class GNN(torch.nn.Module):
         return torch.nn.functional.log_softmax(x, dim=1)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 class LightingFullBatchModelWrapper(pl.LightningModule):
     def __init__(self, model, lr, weight_decay, train_mask, val_mask, test_mask, evaluator=None):
         super().__init__()
@@ -283,50 +270,50 @@ class LightingFullBatchModelWrapper(pl.LightningModule):
         self.evaluator = evaluator
         self.train_mask, self.val_mask, self.test_mask = train_mask, val_mask, test_mask
 
-    def training_step(self, batch, batch_idx):
-        x, y, edge_index = batch.x, batch.y.long(), batch.edge_index
-        out = self.model(x, edge_index)
-
-        # Training loss and accuracy
-        train_loss = nn.functional.nll_loss(out[self.train_mask], y[self.train_mask].squeeze())
-        y_pred = out.max(1)[1]
-        train_acc = self.evaluate(y_pred=y_pred[self.train_mask], y_true=y[self.train_mask])
-
-        self.log("train_loss", train_loss, prog_bar=True)
-        self.log("train_acc", train_acc, prog_bar=True)
-
-        return train_loss
-
-    def validation_step(self, batch, batch_idx):
-        x, y, edge_index = batch.x, batch.y.long(), batch.edge_index
-        out = self.model(x, edge_index)
-
-        # Validation loss and accuracy
-        val_loss = nn.functional.nll_loss(out[self.val_mask], y[self.val_mask].squeeze())
-        y_pred = out.max(1)[1]
-        val_acc = self.evaluate(y_pred=y_pred[self.val_mask], y_true=y[self.val_mask])
-
-        self.log("val_loss", val_loss, prog_bar=True)
-        self.log("val_acc", val_acc, prog_bar=True)
-
-        return val_loss
     # def training_step(self, batch, batch_idx):
     #     x, y, edge_index = batch.x, batch.y.long(), batch.edge_index
     #     out = self.model(x, edge_index)
     #
-    #     loss = nn.functional.nll_loss(out[self.train_mask], y[self.train_mask].squeeze())
-    #     self.log("train_loss", train_loss)
-    #
-    #     loss = nn.functional.nll_loss(out[self.val_mask], y[self.val_mask].squeeze())
-    #     self.log("val_loss", val_loss)
-    #
+    #     # Training loss and accuracy
+    #     train_loss = nn.functional.nll_loss(out[self.train_mask], y[self.train_mask].squeeze())
     #     y_pred = out.max(1)[1]
     #     train_acc = self.evaluate(y_pred=y_pred[self.train_mask], y_true=y[self.train_mask])
-    #     self.log("train_acc", train_acc)
-    #     val_acc = self.evaluate(y_pred=y_pred[self.val_mask], y_true=y[self.val_mask])
-    #     self.log("val_acc", val_acc)
     #
-    #     return loss
+    #     self.log("train_loss", train_loss, prog_bar=True)
+    #     self.log("train_acc", train_acc, prog_bar=True)
+    #
+    #     return train_loss
+    #
+    # def validation_step(self, batch, batch_idx):
+    #     x, y, edge_index = batch.x, batch.y.long(), batch.edge_index
+    #     out = self.model(x, edge_index)
+    #
+    #     # Validation loss and accuracy
+    #     val_loss = nn.functional.nll_loss(out[self.val_mask], y[self.val_mask].squeeze())
+    #     y_pred = out.max(1)[1]
+    #     val_acc = self.evaluate(y_pred=y_pred[self.val_mask], y_true=y[self.val_mask])
+    #
+    #     self.log("val_loss", val_loss, prog_bar=True)
+    #     self.log("val_acc", val_acc, prog_bar=True)
+    #
+    #     return val_loss
+    def training_step(self, batch, batch_idx):
+        x, y, edge_index = batch.x, batch.y.long(), batch.edge_index
+        out = self.model(x, edge_index)
+
+        train_loss = nn.functional.nll_loss(out[self.train_mask], y[self.train_mask].squeeze())
+        self.log("train_loss", train_loss)
+
+        val_loss = nn.functional.nll_loss(out[self.val_mask], y[self.val_mask].squeeze())
+        self.log("val_loss", val_loss)
+
+        y_pred = out.max(1)[1]
+        train_acc = self.evaluate(y_pred=y_pred[self.train_mask], y_true=y[self.train_mask])
+        self.log("train_acc", train_acc)
+        val_acc = self.evaluate(y_pred=y_pred[self.val_mask], y_true=y[self.val_mask])
+        self.log("val_acc", val_acc)
+
+        return train_loss
 
     def evaluate(self, y_pred, y_true):
         if self.evaluator:
