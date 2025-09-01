@@ -84,7 +84,7 @@ chameleon:
   lr: 0.005
   hid_dim: 128
   num_layers: 5
-  jk: "cat"
+#  jk: "cat"
   patience: 400
   conv_type: "scale"
   normalize: True

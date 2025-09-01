@@ -5,7 +5,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 3 supress warning:Unable to register
 import numpy as np
 import uuid
 import socket
-import sys
 import sys, os
 print('CWD:', os.getcwd())
 print('sys.path:', sys.path)
@@ -29,6 +28,16 @@ logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)   #
 import time
 
 original_load = torch.load
+
+import torch
+
+def print_memory(tag=""):
+    if torch.cuda.is_available():
+        allocated = torch.cuda.memory_allocated() / 1024**2
+        reserved = torch.cuda.memory_reserved() / 1024**2
+        print(f"[{tag}] Allocated: {allocated:.2f} MB | Reserved: {reserved:.2f} MB")
+    else:
+        print(f"[{tag}] CUDA not available, skipping memory check")
 
 def custom_load(*args, **kwargs):
     kwargs['weights_only'] = False
@@ -64,9 +73,9 @@ def run(args):
     with open(log_directory + log_file_name_with_timestamp, 'w') as log_file:
         print(args, file=log_file)
         print(f"Machine ID: {socket.gethostname()}-{':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(0, 8 * 6, 8)][::-1])}", file=log_file)
-        sys.stdout = log_file
+        # sys.stdout = log_file
 
-
+        print_memory("Start")
         val_accs, test_accs = [], []
         for num_run in range(args.num_runs):
             print("\nstart run: ", num_run)
@@ -77,16 +86,17 @@ def run(args):
                       "test:", test_mask.sum().item(),
                       file=sys.__stdout__)
 
+            print_memory("Before model load")
             # Get model
             args.num_features, args.num_classes, args.edge_index, args.num_nodes = data.num_features, dataset.num_classes, data.edge_index, num_node
             model = get_model(args)
             print(model)
+            print_memory("After model load")
 
 
             lit_model = LightingFullBatchModelWrapper(
                 model=model,
-                lr=args.lr,
-                weight_decay=args.weight_decay,
+                args=args,
                 evaluator=evaluator,
                 train_mask=train_mask,
                 val_mask=val_mask,
@@ -108,7 +118,7 @@ def run(args):
                 os.mkdir(f"{args.checkpoint_directory}/")
             model_checkpoint_callback = ModelCheckpoint(
                 monitor=monitor_metric,
-                mode="max",
+                mode=mode,
                 dirpath=f"{args.checkpoint_directory}/{str(uuid.uuid4())}/",
             )
 
@@ -128,13 +138,10 @@ def run(args):
                 devices=[args.gpu_idx],
             )
             print(lit_model)
-            # Fit the model
+
+            print_memory("Before training")
             trainer.fit(model=lit_model, train_dataloaders=data_loader)
-            # trainer.fit(
-            #     model=lit_model,
-            #     train_dataloaders=data_loader,
-            #     val_dataloaders=data_loader
-            # )
+
 
             # Compute validation and test accuracy
             val_acc = model_checkpoint_callback.best_model_score.item()

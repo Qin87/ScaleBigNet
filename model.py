@@ -262,11 +262,11 @@ class GNN(torch.nn.Module):
 
 
 class LightingFullBatchModelWrapper(pl.LightningModule):
-    def __init__(self, model, lr, weight_decay, train_mask, val_mask, test_mask, evaluator=None):
+    def __init__(self, model, args, train_mask, val_mask, test_mask, evaluator=None):
         super().__init__()
         self.model = model
-        self.lr = lr
-        self.weight_decay = weight_decay
+        self.lr = args.lr
+        self.weight_decay = args.weight_decay
         self.evaluator = evaluator
         self.train_mask, self.val_mask, self.test_mask = train_mask, val_mask, test_mask
 
@@ -315,6 +315,16 @@ class LightingFullBatchModelWrapper(pl.LightningModule):
 
         return train_loss
 
+    def on_train_epoch_end(self):
+        # Print every 10 epochs (epoch numbers are 0-indexed)
+        if (self.current_epoch + 1) % 30 == 0:
+            # Access last logged val_acc from self.trainer.logger_connector.metrics
+            val_acc = self.trainer.logged_metrics.get("val_acc", None)
+            if val_acc is not None:
+                print(f"Epoch {self.current_epoch + 1}: val_acc = {val_acc:.4f}")
+            else:
+                print(f"Epoch {self.current_epoch + 1}: val_acc not logged yet.")
+
     def evaluate(self, y_pred, y_true):
         if self.evaluator:
             acc = self.evaluator.eval({"y_true": y_true, "y_pred": y_pred.unsqueeze(1)})["acc"]
@@ -329,19 +339,13 @@ class LightingFullBatchModelWrapper(pl.LightningModule):
         y_pred = out.max(1)[1]
         test_acc = self.evaluate(y_pred=y_pred[self.test_mask], y_true=y[self.test_mask])
         self.log("test_acc", test_acc, prog_bar=True)
+        print("test_acc", test_acc)
 
     def configure_optimizers(self):
-        other_params, imag_weights, real_weights = [], [], []
+        other_params= []
 
         for name, param in self.model.named_parameters():
-            if "imag" in name:
-                imag_weights.append(param)
-  
-            elif "real" in name:
-                real_weights.append(param)
-
-            else:
-                other_params.append(param)
+            other_params.append(param)
 
         optimizer = optim.AdamW([{'params': other_params, 'weight_decay': self.weight_decay}], lr = self.lr)
         print(optimizer)

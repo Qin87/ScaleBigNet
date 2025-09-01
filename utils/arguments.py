@@ -18,7 +18,7 @@ parser.add_argument("--transpose", action="store_true", help="Whether to use tra
 ### Model Args
 parser.add_argument("--model", type=str, help="gnn for scale, faber, linkx, link", default="scale")
 parser.add_argument("--monitor", type=str, help="train_loss, train_acc, val_loss, val_acc, ", default="val_acc")
-parser.add_argument("--hid_dim", type=int, help="Hidden dimension of model", default=8)
+parser.add_argument("--hid_dim", type=int, help="Hidden dimension of model", default=32)
 parser.add_argument("--num_layers", type=int, help="Number of GNN layers", default=2)
 parser.add_argument("--dropout", type=float, help="Feature dropout", default=0.5)
 parser.add_argument("--alpha", type=float, help="Direction convex combination params: A, At", default=1)
@@ -46,7 +46,7 @@ parser.add_argument("--patience", type=int, help="Patience for early stopping", 
 parser.add_argument("--num_runs", type=int, help="Max number of runs", default=10)
 
 ### System Args
-parser.add_argument("--use_best_hyperparams", type=int, default=0, help="whether use parameters in best_hyperparameters.yml")
+parser.add_argument("--use_best_hyperparams", type=int, default=1, help="whether use parameters in best_hyperparameters.yml")
 parser.add_argument("--gpu_idx", type=int, help="Indexes of gpu to run program on", default=0)
 parser.add_argument("--num_workers", type=int, help="Num of workers for the dataloader", default=0)
 parser.add_argument("--profiler", action="store_true")
