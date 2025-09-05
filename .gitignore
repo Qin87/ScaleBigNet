@@ -1,5 +1,5 @@
-/checkpoint/
-/lightning_logs/
+/checkpoint/*
+/lightning_logs/*
 *.log
 *.pt
 *.gz
@@ -10,3 +10,4 @@
 *.npz
 job-*
 .idea/*
+dataset/*
