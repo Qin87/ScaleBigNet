@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Direct_dataset=( 'squirrel' )  # 'arxiv-year'  'snap-patents' 'directed-roman-empire'
+Direct_dataset=( 'snap-patents' )  # 'arxiv-year'  'snap-patents' 'directed-roman-empire'
 
 K_values=(1 2 3 )
 Weight_penalties=(  "lin" )

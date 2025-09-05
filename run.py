@@ -16,7 +16,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.callbacks import ModelSummary, ModelCheckpoint
 
-from utils.utils import use_best_hyperparams, get_available_accelerator, log_file
+from utils.utils import use_best_hyperparams, get_available_accelerator, log_file, rename_log, free_space
 from datasets.data_loading import get_dataset, get_dataset_split
 from datasets.dataset import FullBatchGraphDataset
 from model import get_model, LightingFullBatchModelWrapper
@@ -112,7 +112,6 @@ def run(args):
 
             early_stopping_callback = EarlyStopping(monitor=monitor_metric,mode=mode,patience=args.patience)
 
-            # early_stopping_callback = EarlyStopping(monitor=monitor_metric, mode="max", patience=args.patience)
             model_summary_callback = ModelSummary(max_depth=-1)
             if not os.path.exists(f"{args.checkpoint_directory}/"):
                 os.mkdir(f"{args.checkpoint_directory}/")
@@ -163,6 +162,10 @@ def run(args):
 
         print(f"Test Acc: {np.mean(test_accs) *100:.2f}±{np.std(test_accs) * 100:.2f}")
         print(f"Test Acc: {np.mean(test_accs) *100:.2f}±{np.std(test_accs) * 100:.2f}", file=sys.__stdout__)
+        result_str = f"{np.mean(test_accs) * 100:.2f}±{np.std(test_accs) * 100:.2f}"
+
+    rename_log(log_directory, log_file_name_with_timestamp, result_str)
+    free_space()
 
 
 if __name__ == "__main__":

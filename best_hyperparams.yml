@@ -16,6 +16,7 @@ arxiv-year:
   lrelu_slope: 0
   weight_penalty: "None"
 
+
 # 75.05 ± 0.05
 snap-patents:
   alpha: 0.5
@@ -77,7 +78,7 @@ squirrel:
 
 # 80.33 ± 1.19
 chameleon:
-  num_runs: 10  # original split
+#  num_runs: 10  # original split
   alpha: 1  #
   beta: 1  #
   gamma: 1  #
